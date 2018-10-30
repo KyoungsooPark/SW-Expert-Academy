@@ -5,12 +5,12 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 #include <cstdio>
 using namespace std;
 
-int map[20][20], K[25];
+int map[20][20], K[22];
 int N, M;
 
 int abs(int num) { return num < 0 ? -num : num; }
 
-// ÁÖ¾îÁø x, y¿¡¼­ °Å¸®(|x - x1| + |y - y1|)°¡ k ¹Ì¸¸ÀÎ ¸¶¸§¸ð²Ã ¹üÀ§ °Ë»ç
+// ì£¼ì–´ì§„ x, yì—ì„œ ê±°ë¦¬(|x - x1| + |y - y1|)ê°€ k ë¯¸ë§Œì¸ ë§ˆë¦„ëª¨ê¼´ ë²”ìœ„ ê²€ì‚¬
 int calculate(int x, int y, int k) {
 	int sum = 0;
 	for (int i = x - k + 1; i <= x + k - 1; i++) {
@@ -23,38 +23,45 @@ int calculate(int x, int y, int k) {
 			}
 		}
 	}
-	// ÁýÀÇ °³¼ö ¸®ÅÏ
+	// ì§‘ì˜ ê°œìˆ˜ ë¦¬í„´
 	return sum;
 }
 
 int main(void) {
-	// k Å©±â¿¡ µû¸¥ ¿î¿µ ºñ¿ë ¹Ì¸® °è»ê
+	// k í¬ê¸°ì— ë”°ë¥¸ ìš´ì˜ ë¹„ìš© ë¯¸ë¦¬ ê³„ì‚°
 	for (int k = 1; k < 25; k++)
 		K[k] = k * k + (k - 1) * (k - 1);
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		int ans = 0;
-		
-		// ÀÔ·ÂºÎ
+
+		// ìž…ë ¥ë¶€
 		scanf("%d %d", &N, &M);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &map[i][j]);
 
-		// Ã³¸®ºÎ
-		for (int i = 0; i < N; i++) {
-			for (int j = 0; j < N; j++) {
-				for (int k = 1; k < 25; k++) {
-					int temp = calculate(i, j, k);
-					// ¼ÕÇØ¸¦ º¸Áö ¾Ê´Â Á¶°Ç¿¡¼­ ´õ ¸¹Àº Áý¿¡ ¼­ºñ½º°¡ °¡´ÉÇÑ °æ¿ì
+		// ì²˜ë¦¬ë¶€
+		int temp, k;
+		// kì˜ ë²”ìœ„ë¡œ ëª¨ë“  ì˜ì—­ì— ì„œë¹„ìŠ¤ë¥¼ ì œê³µí•  ìˆ˜ ì—†ëŠ” ê²½ìš°
+		for (k = 1; k < 2 * (N / 2) + 1; k++) {
+			for (int i = 0; i < N; i++) {
+				for (int j = 0; j < N; j++) {
+					temp = calculate(i, j, k);
+					// ì†í•´ë¥¼ ë³´ì§€ ì•ŠëŠ” ì¡°ê±´ì—ì„œ ë” ë§Žì€ ì§‘ì— ì„œë¹„ìŠ¤ê°€ ê°€ëŠ¥í•œ ê²½ìš°
 					if (M * temp - K[k] >= 0 && temp > ans)
 						ans = temp;
 				}
 			}
 		}
+		// kì˜ ë²”ìœ„ë¡œ ëª¨ë“  ì˜ì—­ì— ì„œë¹„ìŠ¤ê°€ ê°€ëŠ¥í•œ ê²½ìš°
+		temp = calculate(N / 2, N / 2, k);
+		// ì†í•´ë¥¼ ë³´ì§€ ì•ŠëŠ” ì¡°ê±´ì—ì„œ ë” ë§Žì€ ì§‘ì— ì„œë¹„ìŠ¤ê°€ ê°€ëŠ¥í•œ ê²½ìš°
+		if (M * temp - K[k] >= 0 && temp > ans)
+			ans = temp;
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
