@@ -3,9 +3,10 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
+#define MAX	20
 using namespace std;
 
-int map[20][20], K[22];
+int map[MAX][MAX], K[MAX + 2];
 int N, M;
 
 int abs(int num) { return num < 0 ? -num : num; }
@@ -29,7 +30,7 @@ int calculate(int x, int y, int k) {
 
 int main(void) {
 	// k 크기에 따른 운영 비용 미리 계산
-	for (int k = 1; k < 25; k++)
+	for (int k = 1; k < MAX + 2; k++)
 		K[k] = k * k + (k - 1) * (k - 1);
 	int T;
 	scanf("%d", &T);
