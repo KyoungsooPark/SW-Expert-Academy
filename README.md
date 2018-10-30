@@ -1,1 +1,1 @@
-# Algorithm
+# SW Expert Academy
