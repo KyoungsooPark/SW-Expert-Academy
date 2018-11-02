@@ -1,9 +1,13 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do
+*/
+
 #include <cstdio>
 using namespace std;
 int map[10][10];
 int N, M, C;
 
-// ¹úÅë ¼±ÅÃ ¹üÀ§ ³»¿¡¼­ Ã¤ÃëÇÒ ¼ö ÀÖ´Â ²ÜÀÇ ÃÖ´ë ¾ç °Ë»ç
+// ë²Œí†µ ì„ íƒ ë²”ìœ„ ë‚´ì—ì„œ ì±„ì·¨í•  ìˆ˜ ìˆëŠ” ê¿€ì˜ ìµœëŒ€ ì–‘ ê²€ì‚¬
 int search(int r, int c) {
 	int square_sum = 0;
 	for (int i = 1; i < (1 << M); i++) {
@@ -24,22 +28,22 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d %d %d", &N, &M, &C);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &map[i][j]);
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		int ans = 0, A = 0, B = 0;
 		for (int r1 = 0; r1 < N; r1++) {
 			for (int c1 = 0; c1 <= N - M; c1++) {
 				int square_sum = search(r1, c1);
-				// ÀÏ²Û A°¡ ´õ ¸¹Àº ²ÜÀ» Ã¤ÃëÇÒ ¼ö ÀÖ´Â ¹úÅëÀ» ¼±ÅÃÇÑ °æ¿ì
+				// ì¼ê¾¼ Aê°€ ë” ë§ì€ ê¿€ì„ ì±„ì·¨í•  ìˆ˜ ìˆëŠ” ë²Œí†µì„ ì„ íƒí•œ ê²½ìš°
 				if (A < square_sum) {
 					A = square_sum;
 					B = 0;
-					// ÀÏ²Û BÀÇ ÃÖÀûÀÇ ¹úÅë Å½»ö
+					// ì¼ê¾¼ Bì˜ ìµœì ì˜ ë²Œí†µ íƒìƒ‰
 					for (int r2 = r1; r2 < N; r2++) {
 						for (int c2 = 0; c2 <= N - M; c2++) {
 							if (r2 == r1) {
@@ -57,7 +61,7 @@ int main(void) {
 			}
 		}
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
