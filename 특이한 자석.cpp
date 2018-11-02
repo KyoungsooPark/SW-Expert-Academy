@@ -1,6 +1,7 @@
 /*
 https://www.swexpertacademy.com/main/code/problem/problemDetail.do
 */
+
 #include <cstdio>
 #define CLOCKWISE	1
 #define COUNTERCLOCKWISE	-1
@@ -42,7 +43,7 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		int K, ans = 0;
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d", &K);
 		for (int wheel_num = 0; wheel_num < 4; wheel_num++) {
 			for (int tooth_num = 0; tooth_num < 8; tooth_num++)
@@ -54,33 +55,33 @@ int main(void) {
 			turn_info[k].wheel_num--;
 		}
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		for (int k = 0; k < K; k++) {
 			int wheel_num = turn_info[k].wheel_num;
 			int direction = turn_info[k].direction;
 			int dir_arr[4];
-			// ÀüÃ¼ Åé´Ï¹ÙÄûÀÇ È¸Àü ¹æÇâ ¼³Á¤
+			// ì „ì²´ í†±ë‹ˆë°”í€´ì˜ íšŒì „ ë°©í–¥ ì„¤ì •
 			dir_arr[wheel_num] = direction;
-			// ¿ŞÂÊ Åé´Ï¹ÙÄûÀÇ È¸Àü ¹æÇâ ¼³Á¤
+			// ì™¼ìª½ í†±ë‹ˆë°”í€´ì˜ íšŒì „ ë°©í–¥ ì„¤ì •
 			for (int lw = wheel_num - 1; lw >= 0; lw--) {
 				if (dir_arr[lw + 1] != 0 && right_tooth(lw) != left_tooth(lw + 1))
 					dir_arr[lw] = dir_arr[lw + 1] * (-1);
 				else
 					dir_arr[lw] = 0;
 			}
-			// ¿À¸¥ÂÊ Åé´Ï¹ÙÄûÀÇ È¸Àü ¹æÇâ ¼³Á¤
+			// ì˜¤ë¥¸ìª½ í†±ë‹ˆë°”í€´ì˜ íšŒì „ ë°©í–¥ ì„¤ì •
 			for (int rw = wheel_num + 1; rw < 4; rw++) {
 				if (dir_arr[rw - 1] != 0 && right_tooth(rw - 1) != left_tooth(rw))
 					dir_arr[rw] = dir_arr[rw - 1] * (-1);
 				else
 					dir_arr[rw] = 0;
 			}
-			// ÀüÃ¼ Åé´Ï¹ÙÄû È¸Àü
+			// ì „ì²´ í†±ë‹ˆë°”í€´ íšŒì „
 			for (int w = 0; w < 4; w++)
 				rotate(w, dir_arr[w]);
 		}
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		for (int w = 0; w < 4; w++) {
 			if (wheel[w][top_idx[w]] == 1)
 				ans += (1 << w);
