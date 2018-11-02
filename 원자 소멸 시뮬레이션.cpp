@@ -1,6 +1,7 @@
 /*
 https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXRFInKex8DFAUo&categoryId=AWXRFInKex8DFAUo&categoryType=CODE
 */
+
 #include <cstdio>
 #define QUEUESIZE	100000
 using namespace std;
@@ -35,20 +36,20 @@ int main(void) {
 		int N, ans = 0;
 		begin = end = 0;
 
-		// ÀÔ·ÂºÎ
+		// ìž…ë ¥ë¶€
 		scanf("%d", &N);
 		for (int i = 0; i < N; i++) {
 			int c, r, d, k;
 			scanf("%d %d %d %d", &c, &r, &d, &k);
-			// 1ÃÊ ´ÜÀ§¸¦ 0.5ÃÊ ´ÜÀ§·Î º¯°æ
+			// 1ì´ˆ ë‹¨ìœ„ë¥¼ 0.5ì´ˆ ë‹¨ìœ„ë¡œ ë³€ê²½
 			r = 4000 - (r + 1000) * 2;
 			c = (c + 1000) * 2;
 			map[r][c] = k;
-			// ÃÊ±â ¿øÀÚµéÀÇ À§Ä¡ Å¥¿¡ »ðÀÔ
+			// ì´ˆê¸° ì›ìžë“¤ì˜ ìœ„ì¹˜ íì— ì‚½ìž…
 			push({ r, c, d, k });
 		}
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		while (!empty()) {
 			atom a = pop();
 			if (map[a.r][a.c] > a.k)
@@ -56,19 +57,19 @@ int main(void) {
 			else {
 				int nr = a.r + dr[a.d], nc = a.c + dc[a.d];
 				if (0 <= nr && nr < 4001 && 0 <= nc && nc < 4001) {
-					// ´ÙÀ½ À§Ä¡¿¡ ¿øÀÚ°¡ Á¸ÀçÇÏÁö ¾ÊÀ¸¸é
+					// ë‹¤ìŒ ìœ„ì¹˜ì— ì›ìžê°€ ì¡´ìž¬í•˜ì§€ ì•Šìœ¼ë©´
 					if (map[nr][nc] == 0)
-						// ´ÙÀ½ ÀÌµ¿À» À§ÇØ Å¥¿¡ »ðÀÔ
+						// ë‹¤ìŒ ì´ë™ì„ ìœ„í•´ íì— ì‚½ìž…
 						push({ nr, nc, a.d, a.k });
-					// Á¸ÀçÇÏ¸é ¼Ò¸ê·Î ÀÎÇØ Å¥¿¡ »ðÀÔÇÏÁö ¾Ê°í ¹æÃâÇÒ ¿¡³ÊÁö¸¦ ½×¾ÆµÒ
+					// ì¡´ìž¬í•˜ë©´ ì†Œë©¸ë¡œ ì¸í•´ íì— ì‚½ìž…í•˜ì§€ ì•Šê³  ë°©ì¶œí•  ì—ë„ˆì§€ë¥¼ ìŒ“ì•„ë‘ 
 					map[nr][nc] += map[a.r][a.c];
 				}
 			}
-			// ÀÌµ¿ Àü À§Ä¡ÀÇ ¿¡³ÊÁö¸¦ 0À¸·Î º¯°æ
+			// ì´ë™ ì „ ìœ„ì¹˜ì˜ ì—ë„ˆì§€ë¥¼ 0ìœ¼ë¡œ ë³€ê²½
 			map[a.r][a.c] = 0;
 		}
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 
