@@ -3,61 +3,64 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
-#include <queue>
+#define QUEUESIZE	15 * 12
 using namespace std;
 typedef struct { int h, w, r; } block;
+block q[QUEUESIZE];
 int map[15][12], drop[4];
 int N, W, H, begin, end, ans;
+
+bool empty(void) { return begin == end; }
+void push(block b) { q[end++] = b; }
+block pop(void) { return q[begin++]; }
 
 // DFS
 void go(int n) {
 	if (n == N) {
 		int cpy[15][12], cnt = 0;
-		queue<block> q;
-		// ∏  ƒ´««
+		// Îßµ Ïπ¥Ìîº
 		for (int h = 0; h < H; h++)
 			for (int w = 0; w < W; w++)
 				cpy[h][w] = map[h][w];
 
 		for (int i = 0; i < N; i++) {
-			// ±∏ΩΩ ≥´«œ ¡ˆ¡° ≈Ωªˆ
+			begin = end = 0;
+			// Íµ¨Ïä¨ ÎÇôÌïò ÏßÄÏ†ê ÌÉêÏÉâ
 			for (int h = 0; h < H; h++) {
 				if (cpy[h][drop[i]] > 0) {
-					q.push({ h, drop[i], cpy[h][drop[i]] });
+					push({ h, drop[i], cpy[h][drop[i]] });
 					break;
 				}
 			}
 			// BFS
-			// ∆¯πﬂ
-			while (!q.empty()) {
-				block b = q.front();
-				q.pop();
-				// ∆¯πﬂ
+			// Ìè≠Î∞ú
+			while (!empty()) {
+				block b = pop();
 				cpy[b.h][b.w] = 0;
 				for (int range = 1; range < b.r; range++) {
-					// ªÛ«œ¡¬øÏ ∆¯πﬂ Ω√ «ÿ¥Á ∫Ì∑œ ∞™¿ª 0¿∏∑Œ ∫Ø∞Ê«œ¥¬ ¿Ã¿Ø:
-					// ø¨º‚∆¯πﬂ∑Œ ¿ÃπÃ ≈•ø° ≥÷¿∫ ∫Ì∑œ¿Ã ¥Ÿ¿Ω ø¨º‚∆¯πﬂ ∂ß ∂«¥ŸΩ√ µÈæÓ∞• ºˆ ¿÷±‚ ∂ßπÆø°
-					// ªÛ
+					// ÏÉÅÌïòÏ¢åÏö∞ Ìè≠Î∞ú Ïãú Ìï¥Îãπ Î∏îÎ°ù Í∞íÏùÑ 0ÏúºÎ°ú Î≥ÄÍ≤ΩÌïòÎäî Ïù¥Ïú†:
+					// Ïó∞ÏáÑÌè≠Î∞úÎ°ú Ïù¥ÎØ∏ ÌÅêÏóê ÎÑ£ÏùÄ Î∏îÎ°ùÏù¥ Îã§Ïùå Ïó∞ÏáÑÌè≠Î∞ú Îïå ÎòêÎã§Ïãú Îì§Ïñ¥Í∞à Ïàò ÏûàÍ∏∞ ÎïåÎ¨∏Ïóê
+					// ÏÉÅ
 					if (b.h - range >= 0 && cpy[b.h - range][b.w] > 0) {
-						q.push({ b.h - range, b.w, cpy[b.h - range][b.w] });
+						push({ b.h - range, b.w, cpy[b.h - range][b.w] });
 						cpy[b.h - range][b.w] = 0;
 					}
-					// «œ
+					// Ìïò
 					if (b.h + range < H && cpy[b.h + range][b.w] > 0) {
-						q.push({ b.h + range, b.w, cpy[b.h + range][b.w] });
+						push({ b.h + range, b.w, cpy[b.h + range][b.w] });
 						cpy[b.h + range][b.w] = 0;
 					}
-					// ¡¬
+					// Ï¢å
 					if (b.w - range >= 0 && cpy[b.h][b.w - range] > 0) {
-						q.push({ b.h, b.w - range, cpy[b.h][b.w - range] });
+						push({ b.h, b.w - range, cpy[b.h][b.w - range] });
 						cpy[b.h][b.w - range] = 0;
 					}
-					// øÏ
+					// Ïö∞
 					if (b.w + range < W && cpy[b.h][b.w + range] > 0) {
-						q.push({ b.h, b.w + range, cpy[b.h][b.w + range] });
+						push({ b.h, b.w + range, cpy[b.h][b.w + range] });
 						cpy[b.h][b.w + range] = 0;
 					}
-					// Ω√∞£ √ ∞˙
+					// ÏãúÍ∞Ñ Ï¥àÍ≥º
 					//int nh[4] = { b.h - range, b.h + range, b.h, b.h };
 					//int nw[4] = { b.w, b.w, b.w - range, b.w + range };
 					//for (int i = 0; i < 4; i++) {
@@ -69,7 +72,7 @@ void go(int n) {
 					//}
 				}
 			}
-			// ∫Æµπ ≥´«œ
+			// Î≤ΩÎèå ÎÇôÌïò
 			for (int w = 0; w < W; w++)
 				for (int h = H - 1; h > 0; h--)
 					if (cpy[h][w] == 0)
@@ -80,7 +83,7 @@ void go(int n) {
 								break;
 							}
 		}
-		// ≥≤¿∫ ∫Æµπ ºº±‚
+		// ÎÇ®ÏùÄ Î≤ΩÎèå ÏÑ∏Í∏∞
 		for (int h = 0; h < H; h++)
 			for (int w = 0; w < W; w++)
 				if (cpy[h][w] > 0)
@@ -90,8 +93,8 @@ void go(int n) {
 		return;
 	}
 
-	for (int w = 0; w < W; w++) {
-		drop[n] = w;
+	for (int i = 0; i < W; i++) {
+		drop[n] = i;
 		go(n + 1);
 	}
 }
@@ -101,18 +104,19 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 
-		// ¿‘∑¬∫Œ
+		// ÏûÖÎ†•Î∂Ä
 		scanf("%d %d %d", &N, &W, &H);
 		for (int h = 0; h < H; h++)
 			for (int w = 0; w < W; w++)
 				scanf("%d", &map[h][w]);
 
-		// √≥∏Æ∫Œ
+		// Ï≤òÎ¶¨Î∂Ä
 		ans = 2e9;
 		go(0);
 
-		// √‚∑¬∫Œ
+		// Ï∂úÎ†•Î∂Ä
 		printf("#%d %d\n", t, ans);
 	}
+
 	return 0;
 }
