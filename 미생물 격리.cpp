@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV597vbqAH0DFAVl&categoryId=AV597vbqAH0DFAVl&categoryType=CODE
+*/
+
 #include <cstdio>
 #define UP		1
 #define DOWN	2
@@ -6,13 +10,13 @@
 
 using namespace std;
 typedef struct {
-	int cnt;	// ¹Ì»ı¹°ÀÇ ¼ö
-	int dir;	// ÁøÇà ¹æÇâ
-	int maxcnt;	// ÇØ´ç Ä­À¸·Î ¿©·¯ ±ºÁıÀÌ ¿ÔÀ» °æ¿ì °¡Àå Å« ±ºÁıÀÇ ¹Ì»ı¹°ÀÇ ¼ö
+	int cnt;	// ë¯¸ìƒë¬¼ì˜ ìˆ˜
+	int dir;	// ì§„í–‰ ë°©í–¥
+	int maxcnt;	// í•´ë‹¹ ì¹¸ìœ¼ë¡œ ì—¬ëŸ¬ êµ°ì§‘ì´ ì™”ì„ ê²½ìš° ê°€ì¥ í° êµ°ì§‘ì˜ ë¯¸ìƒë¬¼ì˜ ìˆ˜
 } node;
 
-node map[100][100];			// ÇöÀç ¹Ì»ı¹° Á¤º¸
-node next_map[100][100];	// 1½Ã°£ ÈÄ ¹Ì»ı¹° Á¤º¸
+node map[100][100];			// í˜„ì¬ ë¯¸ìƒë¬¼ ì •ë³´
+node next_map[100][100];	// 1ì‹œê°„ í›„ ë¯¸ìƒë¬¼ ì •ë³´
 int dx[5] = { 0, -1, 1, 0, 0 };
 int dy[5] = { 0, 0, 0, -1, 1 };
 int N, M, K;
@@ -24,10 +28,10 @@ void move(void) {
 				int nx = x + dx[map[x][y].dir];
 				int ny = y + dy[map[x][y].dir];
 
-				// ¾àÇ° Ã³¸®µÈ °÷ÀÎ °æ¿ì
+				// ì•½í’ˆ ì²˜ë¦¬ëœ ê³³ì¸ ê²½ìš°
 				if (nx == 0 || nx == N - 1 || ny == 0 || ny == N - 1) {
 					next_map[nx][ny].cnt = map[x][y].cnt / 2;
-					// ÁøÇà¹æÇâ ¹İÀü
+					// ì§„í–‰ë°©í–¥ ë°˜ì „
 					switch (map[x][y].dir) {
 					case UP: next_map[nx][ny].dir = DOWN; break;
 					case DOWN: next_map[nx][ny].dir = UP; break;
@@ -46,13 +50,13 @@ void move(void) {
 		}
 	}
 
-	// next_map Á¤º¸¸¦ mapÀ¸·Î ¿Å±ä ÈÄ next_map ÃÊ±âÈ­
+	// next_map ì •ë³´ë¥¼ mapìœ¼ë¡œ ì˜®ê¸´ í›„ next_map ì´ˆê¸°í™”
 	for (int x = 0; x < N; x++)
 		for (int y = 0; y < N; y++)
 			map[x][y] = next_map[x][y], next_map[x][y] = { 0, 0, 0 };
 }
 
-// ³²¾ÆÀÖ´Â ÃÑ ¹Ì»ı¹° ¼ö ¹İÈ¯
+// ë‚¨ì•„ìˆëŠ” ì´ ë¯¸ìƒë¬¼ ìˆ˜ ë°˜í™˜
 int get_answer(void) {
 	int sum = 0;
 	for (int x = 0; x < N; x++)
@@ -67,7 +71,7 @@ int main(void) {
 	for (int t = 1; t <= T; t++) {
 		int x, y, c, d;
 
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d %d %d", &N, &M, &K);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
@@ -77,11 +81,11 @@ int main(void) {
 			map[x][y] = { c, d, c };
 		}
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		while (M--)
 			move();
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, get_answer());
 	}
 	return 0;
