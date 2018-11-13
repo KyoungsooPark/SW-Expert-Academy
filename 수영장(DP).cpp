@@ -3,47 +3,47 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 /*
-Âü°í: http://2youngjae.tistory.com/72
+ì°¸ê³ : http://2youngjae.tistory.com/72
 
-1ÀÏ or 1´Þ / 3´Þ / 1³â ---> 3°¡Áö·Î ºÐÇÒ
+1ì¼ or 1ë‹¬ / 3ë‹¬ / 1ë…„ ---> 3ê°€ì§€ë¡œ ë¶„í• 
 
-dMonth: °¢ ¿ùº° min( ÀÏ¼ö x 1ÀÏ ÀÌ¿ë±Ç, 1´Þ ÀÌ¿ë±Ç ) ÀúÀå
-d[n]  : n ¹øÂ° ´ÞÀÇ ´©Àû ÃÖ¼Ò°ª ÀúÀå
+dMonth: ê° ì›”ë³„ min( ì¼ìˆ˜ x 1ì¼ ì´ìš©ê¶Œ, 1ë‹¬ ì´ìš©ê¶Œ ) ì €ìž¥
+d[n]  : n ë²ˆì§¸ ë‹¬ì˜ ëˆ„ì  í•©ê³„ ìµœì†Œê°’ ì €ìž¥
 
-ex) 4¿ùÀÇ ´©Àû ÃÖ¼Ò°ª d[4]Àº ´ÙÀ½ 3°¡Áö °æ¿ì Áß ÃÖ¼Ò°ª
+ex) 4ì›”ì˜ ëˆ„ì  í•©ê³„ ìµœì†Œê°’ d[4]ëŠ” ë‹¤ìŒ 3ê°€ì§€ ê²½ìš° ì¤‘ ìµœì†Œê°’
 
 	1. dMonth[1] + dMonth[2] + dMonth[3] + dMonth[4]
-	2. 3´Þ(1, 2, 3) ÀÌ¿ë±Ç + dMonth[4];
-	3. dMonth[1] + 3´Þ(2, 3, 4) ÀÌ¿ë±Ç
+	2. 3ë‹¬(1, 2, 3) ì´ìš©ê¶Œ + dMonth[4];
+	3. dMonth[1] + 3ë‹¬(2, 3, 4) ì´ìš©ê¶Œ
 
- ¿©±â¼­ 1¹ø°ú 2¹øÀº
+ ì—¬ê¸°ì„œ 1ë²ˆê³¼ 2ë²ˆì€
 
 	d[3] + dMonth[4]
 
-ÀÌ°í, 3¹øÀº
+ì´ê³ , 3ë²ˆì€
 
-	d[1] + 3´Þ ÀÌ¿ë±Ç
+	d[1] + 3ë‹¬ ì´ìš©ê¶Œ
 
-µû¶ó¼­,
+ë”°ë¼ì„œ,
 
-	d[4] = min( d[3] + dMonth[4], d[1] + 3´Þ ÀÌ¿ë±Ç)
+	d[4] = min( d[3] + dMonth[4], d[1] + 3ë‹¬ ì´ìš©ê¶Œ)
 
-ÀÌ¸¦ Åä´ë·Î Á¡È­½ÄÀ» ¼¼¿öº¸¸é,
+ì´ë¥¼ í† ëŒ€ë¡œ ì í™”ì‹ì„ ì„¸ì›Œë³´ë©´,
 
-	d[n] = min( d[n-1] + dMonth[n], d[n-3] + 3´Þ ÀÌ¿ë±Ç )
+	d[n] = min( d[n-1] + dMonth[n], d[n-3] + 3ë‹¬ ì´ìš©ê¶Œ )
 
-ex) n = 7	: d[6] + dMonth[7] : 6¿ù±îÁöÀÇ ÃÖ¼Òºñ¿ë + 7¿ù ÃÖ¼Òºñ¿ë
-			: d[4] + 3´ÞÀÌ¿ë±Ç : 4¿ù±îÁöÀÇ ÃÖ¼Òºñ¿ë + 3´Þ(5, 6, 7) ÀÌ¿ë±Ç ºñ¿ë
+ex) n = 7	: d[6] + dMonth[7] : 6ì›”ê¹Œì§€ì˜ ìµœì†Œë¹„ìš© + 7ì›” ìµœì†Œë¹„ìš©
+			: d[4] + 3ë‹¬ì´ìš©ê¶Œ : 4ì›”ê¹Œì§€ì˜ ìµœì†Œë¹„ìš© + 3ë‹¬(5, 6, 7) ì´ìš©ê¶Œ ë¹„ìš©
 
-¸¶Áö¸·À¸·Î d[12]¿Í 1³â ÀÌ¿ë±Ç ºñ±³
+ë§ˆì§€ë§‰ìœ¼ë¡œ d[12]ì™€ 1ë…„ ì´ìš©ê¶Œ ë¹„êµ
 */
 
 #include <cstdio>
 using namespace std;
 
 int price[4], table[13];
-int dMonth[13];	// ¿ù°£ ÃÖ¼Ò°ª
-int d[13];		// N ¹øÂ° ´ÞÀÇ ´©Àû ÃÖ¼Ò°ª
+int dMonth[13]; // ì›”ê°„ ìµœì†Œê°’
+int d[13];      // N ë²ˆì§¸ ë‹¬ì˜ ëˆ„ì  í•©ê³„ ìµœì†Œê°’
 
 int min(int a, int b) { return (a < b) ? a : b; }
 
@@ -51,15 +51,14 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ÀÔ·ÂºÎ
+		// ìž…ë ¥ë¶€
 		for (int i = 0; i < 4; i++)
 			scanf("%d", &price[i]);
 		for (int i = 1; i <= 12; i++)
 			scanf("%d", &table[i]);
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		for (int i = 1; i <= 12; i++)
-			// min(1ÀÏ ÀÌ¿ë±Ç ¿ä±Ý x ÀÏ¼ö, 1´Þ ÀÌ¿ë±Ç ¿ä±Ý)
 			dMonth[i] = min(price[0] * table[i], price[1]);
 
 		for (int i = 1; i <= 12; i++) {
@@ -70,7 +69,7 @@ int main(void) {
 		if (d[12] > price[3])
 			d[12] = price[3];
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, d[12]);
 	}
 	return 0;
