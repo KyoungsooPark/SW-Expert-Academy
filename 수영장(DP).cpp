@@ -42,7 +42,7 @@ ex) n = 7	: d[6] + dMonth[7] : 6월까지의 최소비용 + 7월 최소비용
 using namespace std;
 
 int price[4], table[13];
-int dMonth[13]; // 월간 최소값
+int dMonth[13]; // 각 월별 최소값
 int d[13];      // N 번째 달의 누적 합계 최소값
 
 int min(int a, int b) { return (a < b) ? a : b; }
@@ -58,14 +58,16 @@ int main(void) {
 			scanf("%d", &table[i]);
 
 		// 처리부
+		// 각 월별 최소값 저장
 		for (int i = 1; i <= 12; i++)
 			dMonth[i] = min(price[0] * table[i], price[1]);
-
+		// 누적 합계 최소값 저장
 		for (int i = 1; i <= 12; i++) {
 			d[i] = d[i - 1] + dMonth[i];
 			if (i >= 3)
 				d[i] = min(d[i], d[i - 3] + price[2]);
 		}
+		// 1년 이용권 가격과 비교
 		if (d[12] > price[3])
 			d[12] = price[3];
 
