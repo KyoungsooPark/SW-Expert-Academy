@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5PpFQaAQMDFAUq&categoryId=AV5PpFQaAQMDFAUq&categoryType=CODE
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -14,15 +18,15 @@ void go(int n) {
 		return;
 	}
 
-	// 1ÀÏ ÀÌ¿ë±Ç
+	// 1ì¼ ì´ìš©ê¶Œ
 	pay[n] = table[n] * price[0];
 	go(n + 1);
 
-	// 1´Ş ÀÌ¿ë±Ç
+	// 1ë‹¬ ì´ìš©ê¶Œ
 	pay[n] = table[n] ? price[1] : 0;
 	go(n + 1);
 
-	// 3´Ş ÀÌ¿ë±Ç
+	// 3ë‹¬ ì´ìš©ê¶Œ
 	if (table[n] || table[n + 1] || table[n + 2])
 		pay[n] = price[2];
 	else
@@ -35,17 +39,17 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		for (int i = 0; i < 4; i++)
 			scanf("%d", &price[i]);
 		for (int i = 0; i < 12; i++)
 			scanf("%d", &table[i]);
 
-		// Ã³¸®ºÎ
-		ans = price[3];	// 1³â ÀÌ¿ë±Ç
+		// ì²˜ë¦¬ë¶€
+		ans = price[3];	// 1ë…„ ì´ìš©ê¶Œ
 		go(0);
 
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
