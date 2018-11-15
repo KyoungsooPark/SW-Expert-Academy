@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5PpLlKAQ4DFAUq&
+*/
+
 #include <cstdio>
 #define QUEUESIZE	700
 using namespace std;
