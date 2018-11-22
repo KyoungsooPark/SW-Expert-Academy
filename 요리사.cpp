@@ -3,64 +3,61 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
-#include <vector>
 using namespace std;
 
+bool check[16];
 int table[16][16];
-bool visited[16];
-vector<int> A;
 int N, ans;
 
-int calculate(void) {
+int min(int a, int b) { return a <= b ? a : b; }
+
+int cal(void) {
 	int ret = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
-			if (visited[i] != visited[j])
+			if (check[i] != check[j])
 				continue;
-			// A ¿ä¸®ÀÇ Àç·á
-			if (visited[i])
+			if (check[i])
+				// A ìš”ë¦¬ì˜ ìž¬ë£Œ
 				ret += table[i][j];
-			// B ¿ä¸®ÀÇ Àç·á
 			else
+				// B ìš”ë¦¬ì˜ ìž¬ë£Œ
 				ret -= table[i][j];
 		}
 	}
-	// Àý´ë°ª ¹ÝÈ¯
-	return ret > 0 ? ret : -ret;
+	// ì ˆëŒ€ê°’ ë°˜í™˜
+	return ret >= 0 ? ret : -ret;
 }
 
 void go(int n, int cur) {
 	if (n == N / 2) {
-		int temp = calculate();
-		if (ans > temp)
-			ans = temp;
+		ans = min(ans, cal());
 		return;
 	}
-	
-	// nC(n/2) Á¶ÇÕÀ» À§ÇÑ ¹üÀ§
+	// nC(n/2) ì¡°í•©
 	for (int i = cur; i <= N / 2 + n; i++) {
-		// A ¿ä¸®ÀÇ Àç·á ¼±ÅÃ
-		visited[i] = true;
+		// A ìš”ë¦¬ì˜ ìž¬ë£Œ ì„ íƒ
+		check[i] = true;
 		go(n + 1, i + 1);
-		visited[i] = false;
+		check[i] = false;
 	}
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
-	for (int t = 1; t <= T; ++t) {
-		// ÀÔ·ÂºÎ
+	for (int t = 1; t <= T; t++) {
+		// ìž…ë ¥ë¶€
 		scanf("%d", &N);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &table[i][j]);
 
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		ans = 2e9;
 		go(0, 0);
 
-		//Ãâ·ÂºÎ
+		//ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
