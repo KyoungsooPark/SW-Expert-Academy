@@ -3,7 +3,7 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
-#define UP		1
+#define UP	1
 #define DOWN	2
 #define LEFT	3
 #define RIGHT	4
@@ -70,12 +70,12 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		int x, y, c, d;
-
-		// 입력부
-		scanf("%d %d %d", &N, &M, &K);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				map[i][j] = { 0, 0, 0 };
+
+		// 입력부
+		scanf("%d %d %d", &N, &M, &K);
 		for (int i = 0; i < K; i++) {
 			scanf("%d %d %d %d", &x, &y, &c, &d);
 			map[x][y] = { c, d, c };
