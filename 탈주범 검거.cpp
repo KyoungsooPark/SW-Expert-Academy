@@ -1,9 +1,9 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5PpLlKAQ4DFAUq&
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5PpLlKAQ4DFAUq&categoryId=AV5PpLlKAQ4DFAUq&categoryType=CODE
 */
 
 #include <cstdio>
-#define QUEUESIZE	700
+#define QUEUESIZE	80	// 20시간 후 queue의 최대 길이 = 4 * 19 = 76
 using namespace std;
 typedef struct { int x, y; } node;
 
@@ -17,46 +17,45 @@ int N, M, begin, end;
 int size(void) { return begin <= end ? end - begin : QUEUESIZE + end - begin; }
 void push(node n) { q[end++] = n; if (end == QUEUESIZE) end = 0; }
 node pop(void) { node ret = q[begin++]; if (begin == QUEUESIZE) begin = 0; return ret; }
-bool isvalid(int x, int y) { return 0 <= x && x < N && 0 <= y && y < M && !visited[x][y]; }
 
 // 위쪽으로 진행
 void up(int x, int y) {
-	int nx = x + dx[0], ny = y + dy[0];
-	if (!isvalid(nx, ny)) return;
-	switch (map[nx][ny]) {	// 다음 위치의 터널 구조물 타입
-	case 1: case 2: case 5: case 6:	// ┼, │, ┌, ┐
-		visited[nx][ny] = true;
-		push({ nx, ny });
+	x += dx[0];
+	if (0 <= x && x < N && !visited[x][y]) {
+		switch (map[x][y]) {	// 다음 터널의 구조물 타입
+		case 1: case 2: case 5: case 6:	// ┼, │, ┌, ┐
+			push({ x, y }), visited[x][y] = true;
+		}
 	}
 }
 // 아래쪽으로 진행
 void down(int x, int y) {
-	int nx = x + dx[1], ny = y + dy[1];
-	if (!isvalid(nx, ny)) return;
-	switch (map[nx][ny]) {	// 다음 위치의 터널 구조물 타입
-	case 1: case 2: case 4: case 7:	// ┼, │, └, ┘
-		visited[nx][ny] = true;
-		push({ nx, ny });
+	x += dx[1];
+	if (0 <= x && x < N && !visited[x][y]) {
+		switch (map[x][y]) {	// 다음 터널의 구조물 타입
+		case 1: case 2: case 4: case 7:	// ┼, │, └, ┘
+			push({ x, y }), visited[x][y] = true;
+		}
 	}
 }
 // 왼쪽으로 진행
 void left(int x, int y) {
-	int nx = x + dx[2], ny = y + dy[2];
-	if (!isvalid(nx, ny)) return;
-	switch (map[nx][ny]) {	// 다음 위치의 터널 구조물 타입
-	case 1: case 3: case 4: case 5:	// ┼, ─, └, ┌
-		visited[nx][ny] = true;
-		push({ nx, ny });
+	y += dy[2];
+	if (0 <= y && y < M && !visited[x][y]) {
+		switch (map[x][y]) {	// 다음 터널의 구조물 타입
+		case 1: case 3: case 4: case 5:	// ┼, ─, └, ┌
+			push({ x, y }), visited[x][y] = true;
+		}
 	}
 }
 // 오른쪽으로 진행
 void right(int x, int y) {
-	int nx = x + dx[3], ny = y + dy[3];
-	if (!isvalid(nx, ny)) return;
-	switch (map[nx][ny]) {	// 다음 위치의 터널 구조물 타입
-	case 1: case 3: case 6: case 7:	// ┼, ─, ┐, ┘
-		visited[nx][ny] = true;
-		push({ nx, ny });
+	y += dy[3];
+	if (0 <= y && y < M && !visited[x][y]) {
+		switch (map[x][y]) {	// 다음 터널의 구조물 타입
+		case 1: case 3: case 6: case 7:	// ┼, ─, ┐, ┘
+			push({ x, y }), visited[x][y] = true;
+		}
 	}
 }
 
@@ -71,14 +70,10 @@ int main(void) {
 		scanf("%d %d %d %d %d", &N, &M, &R, &C, &L);
 		for (int n = 0; n < N; n++)
 			for (int m = 0; m < M; m++)
-				scanf("%d", &map[n][m]);
-		for (int n = 0; n < 50; n++)
-			for (int m = 0; m < 50; m++)
-				visited[n][m] = false;
+				scanf("%d", &map[n][m]), visited[n][m] = false;
 
 		// 처리부
-		visited[R][C] = true;
-		push({ R, C });
+		push({ R, C }), visited[R][C] = true;
 		while (--L) {
 			int qsize = size();
 			if (qsize == 0) break;
@@ -86,19 +81,19 @@ int main(void) {
 				node now = pop();
 				switch (map[now.x][now.y]) {	// 현재 위치의 터널 구조물 타입
 				case 1:	// ┼
-					up(now.x, now.y); down(now.x, now.y); left(now.x, now.y); right(now.x, now.y); break;
+					up(now.x, now.y), down(now.x, now.y), left(now.x, now.y), right(now.x, now.y); break;
 				case 2:	// │
-					up(now.x, now.y); down(now.x, now.y); break;
+					up(now.x, now.y), down(now.x, now.y); break;
 				case 3:	// ─
-					left(now.x, now.y); right(now.x, now.y); break;
+					left(now.x, now.y), right(now.x, now.y); break;
 				case 4:	// └
-					up(now.x, now.y); right(now.x, now.y); break;
+					up(now.x, now.y), right(now.x, now.y); break;
 				case 5:	// ┌
-					down(now.x, now.y); right(now.x, now.y); break;
+					down(now.x, now.y), right(now.x, now.y); break;
 				case 6:	// ┐
-					down(now.x, now.y); left(now.x, now.y); break;
+					down(now.x, now.y), left(now.x, now.y); break;
 				case 7:	// ┘
-					up(now.x, now.y); left(now.x, now.y); break;
+					up(now.x, now.y), left(now.x, now.y); break;
 				}
 			}
 		}
