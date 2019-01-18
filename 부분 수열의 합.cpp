@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV7IzvG6EksDFAXB&categoryId=AV7IzvG6EksDFAXB&categoryType=CODE
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -8,24 +12,24 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		int n, k, ans = 0;
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d %d", &n, &k);
 		for (int i = 0; i < n; i++)
 			scanf("%d", &arr[i]);
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		for (int i = 1; i < (1 << n); i++) {
 			int temp = 0;
 			for (int j = 0; j < n; j++) {
 				if (i & (1 << j)) {
 					temp += arr[j];
-					if (temp > k)	// ½ÇÇà ½Ã°£À» ÁÙÀÌ´Â ÇÙ½É
+					if (temp > k)	// ì‹¤í–‰ ì‹œê°„ì„ ì¤„ì´ëŠ” í•µì‹¬
 						break;
 				}
 			}
 			if (temp == k)
 				ans++;
 		}
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
