@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5LrsUaDxcDFAXc&categoryId=AV5LrsUaDxcDFAXc&categoryType=CODE
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -8,18 +12,18 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		long long ans = 0;
-		// 涝仿何
+		// 脌脭路脗潞脦
 		scanf("%d", &N);
 		for (int i = 0; i < N; i++)
 			scanf("%d", &price[i]);
-		// 贸府何
+		// 脙鲁赂庐潞脦
 		for (int i = N - 2, max_price = price[N - 1]; i >= 0; i--) {
 			if (price[i] > max_price)
 				max_price = price[i];
 			else
 				ans += max_price - price[i];
 		}
-		// 免仿何
+		// 脙芒路脗潞脦
 		printf("#%d %lld\n", t, ans);
 	}
 	return 0;
