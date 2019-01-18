@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5PobmqAPoDFAUq&categoryId=AV5PobmqAPoDFAUq&categoryType=CODE
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -5,7 +9,7 @@ int arr[10][10];
 int dx[4] = { 0, 1, 0, -1 };
 int dy[4] = { 1, 0, -1, 0 };
 
-// ´ŞÆØÀÌ ¹è¿­ »ı¼º
+// ë‹¬íŒ½ì´ ë°°ì—´ ìƒì„±
 void snail_array(int N) {
 	int x = 0, y = -1, cnt, d = 0, n = 1;
 	cnt = 2 * N - 1;
@@ -25,11 +29,11 @@ int main(void) {
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
 		int N;
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d", &N);
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		snail_array(N);
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d\n", t);
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++)
