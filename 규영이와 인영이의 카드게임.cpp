@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWgv9va6HnkDFAW0&categoryId=AWgv9va6HnkDFAW0&categoryType=CODE
+*/
+
 #include <cstdio>
 using namespace std;
 
@@ -25,7 +29,7 @@ void go(int n, int score) {
 int main(void) {
 	int T;
 	scanf("%d", &T);
-	// table ÃÊ±âÈ­
+	// table ì´ˆê¸°í™”
 	for (int i = 1; i <= 18; i++) {
 		for (int j = 1; j <= 18; j++) {
 			if (i >= j)
@@ -35,21 +39,21 @@ int main(void) {
 		}
 	}
 	for (int t = 1; t <= T; t++) {
-		// check ¹è¿­ ÃÊ±âÈ­
+		// check ë°°ì—´ ì´ˆê¸°í™”
 		for (int i = 1; i <= 18; i++)
 			check[i] = false;
-		// ÀÔ·ÂºÎ
+		// ìž…ë ¥ë¶€
 		for (int i = 0; i < 9; i++) {
 			scanf("%d", &card_a[i]);
 			check[card_a[i]] = true;
 		}
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		for (int i = 1, j = 0; i <= 18; i++)
 			if (!check[i])
 				card_b[j++] = i;
 		win = lose = 0;
 		go(0, 0);
-		// Ãâ·ÂºÎ
+		// ì¶œë ¥ë¶€
 		printf("#%d %d %d\n", t, win, lose);
 	}
 	return 0;
