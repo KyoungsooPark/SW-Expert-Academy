@@ -1,3 +1,7 @@
+/*
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV15Khn6AN0CFAYD&categoryId=AV15Khn6AN0CFAYD&categoryType=CODE
+*/
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -5,7 +9,7 @@
 using namespace std;
 
 string str;
-map<string, bool> check[11];	// πÊπÆ ø©∫Œ √º≈©
+map<string, bool> check[11];	// Î∞©Î¨∏ Ïó¨Î∂Ä Ï≤¥ÌÅ¨
 int N, ans;
 
 void go(int n) {
@@ -16,9 +20,9 @@ void go(int n) {
 	for (int i = 0; i < str.size() - 1; i++) {
 		for (int j = i + 1; j < str.size(); j++) {
 			swap(str[i], str[j]);
-			if (!check[n + 1].count(str)) {	// n + 1»∏ ±≥»Ø¿∏∑Œ str¿ª πÊπÆ«— ¿˚¿Ã æ¯¥¬ ∞ÊøÏ
+			if (!check[n + 1].count(str)) {	// n + 1Ìöå ÍµêÌôòÏúºÎ°ú strÏùÑ Î∞©Î¨∏Ìïú Ï†ÅÏù¥ ÏóÜÎäî Í≤ΩÏö∞
 				check[n + 1][str] = true;
-				go(n + 1);	// ¿˚øÎ »ƒ ¥Ÿ¿Ω ±≥»Ø ¡¯«‡
+				go(n + 1);	// Ï†ÅÏö© ÌõÑ Îã§Ïùå ÍµêÌôò ÏßÑÌñâ
 			}
 			swap(str[i], str[j]);
 		}
