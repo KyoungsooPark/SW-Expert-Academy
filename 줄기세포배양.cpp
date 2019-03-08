@@ -3,74 +3,62 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
-#define MAX	150 + 50 + 150
-#define QUEUESIZE	700
+#include <cstring>
+#include <queue>
 using namespace std;
-typedef struct { int x, y, life; } cell;
+typedef struct { int x, y, t; } cell;
 
-cell q[10][QUEUESIZE];	// ìš°ì„ ìˆœìœ„ í
-int map[MAX][MAX];
-int dx[4] = { -1, 1, 0, 0 };
-int dy[4] = { 0, 0, -1, 1 };
-int begin[10], end[10];
-
-int size(int p) { return begin[p] <= end[p] ? end[p] - begin[p] : QUEUESIZE + end[p] - begin[p]; }
-void push(int p, cell c) { q[p][end[p]++] = c; if (end[p] == QUEUESIZE) end[p] = 0; }
-cell pop(int p) { cell ret = q[p][begin[p]++]; if (begin[p] == QUEUESIZE) begin[p] = 0; return ret; }
-
-void reset(void) {
-	// ì„¸í¬ê°€ ì£½ë”ë¼ë„ ì†Œë©¸ë˜ì§€ ì•Šê³  ë‚¨ì•„ìˆìœ¼ë¯€ë¡œ ë¦¬ì…‹í•´ì¤˜ì•¼ í•¨
-	for (int n = 0; n < MAX; n++)
-		for (int m = 0; m < MAX; m++)
-			map[n][m] = 0;
-	// ìš°ì„ ìˆœìœ„ í ì´ˆê¸°í™”
-	for (int p = 0; p < 10; p++)
-		begin[p] = end[p] = 0;
+// K°¡ ÃÖ´ë°ª(300)ÀÌ°í Áõ½Ä ¼Óµµ°¡ °¡Àå ºü¸¥ ¼¼Æ÷(»ı¸í·Â = 1)ÀÇ °æ¿ì °¢ ¹æÇâ¸¶´Ù
+// ÃÖ´ë 150Ä­(300 / 2) ¸¸Å­ Áõ½Ä. µû¶ó¼­, 150 + N, M ÃÖ´ë°ª 50 + 150 = 350
+int map[350][350];
+int dx[4] = { 0, 0, 1, -1 };
+int dy[4] = { 1, -1, 0, 0 };
+int N, M, K;
+// ¼¼Æ÷ Áõ½Ä
+void proliferate(queue<cell> q[], cell p) {
+	for (int d = 0; d < 4; d++) {
+		int nx = p.x + dx[d], ny = p.y + dy[d];
+		if (!map[nx][ny]) {	// ´Ù¸¥ ¼¼Æ÷°¡ Á¸ÀçÇÏÁö ¾Ê´Â °æ¿ì
+			map[nx][ny] = p.t;	// °æ°ú ½Ã°£ÀÌ »ı¸í·Â°ú °°À» ¶§, µ¿ÀÏÇÑ »ı¸í·ÂÀÇ ¼¼Æ÷ Áõ½Ä
+			q[p.t].push({ nx, ny, p.t * 2 });	// »õ·Ó°Ô Áõ½ÄµÈ ¼¼Æ÷ Å¥¿¡ »ğÀÔ
+		}
+	}
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		int N, M, K, ans = 0;
+		queue<cell> q[11];
+		int ans = 0;
 
-		// ì…ë ¥ë¶€
+		// ÀÔ·ÂºÎ
 		scanf("%d %d %d", &N, &M, &K);
-		for (int n = 150; n < N + 150; n++) {
-			for (int m = 150; m < M + 150; m++) {
-				scanf("%d", &map[n][m]);
-				if (map[n][m])
-					push(map[n][m] - 1, { n, m, map[n][m] * 2 });
+		for (int i = 150; i < N + 150; i++) {
+			for (int j = 150; j < M + 150; j++) {
+				scanf("%d", &map[i][j]);
+				if (map[i][j])
+					q[map[i][j]].push({ i, j, map[i][j] * 2 });
 			}
 		}
-
-		// ì²˜ë¦¬ë¶€
+		// Ã³¸®ºÎ
 		while (K--) {
-			for (int p = 9; p >= 0; p--) {	// ìƒëª…ë ¥ì´ ê°•í•œ ì¤„ê¸°ì„¸í¬ë¶€í„° ë²ˆì‹
-				int qsize = size(p);
-				while (qsize--) {	// í ë‚´ì˜ ì¤„ê¸°ì„¸í¬ ëª¨ë‘ ìˆ˜í–‰
-					cell now = pop(p);
-					if (now.life == map[now.x][now.y]) {	// ì¤„ê¸°ì„¸í¬ê°€ í™œì„±í™”ëœ ê²½ìš°
-						for (int d = 0; d < 4; d++) {
-							int nx = now.x + dx[d], ny = now.y + dy[d];
-							if (map[nx][ny] == 0) {	// ë„¤ ë°©í–¥ ì¤‘ ì„¸í¬ê°€ ì¡´ì¬í•˜ì§€ ì•ŠëŠ” ê³³ì— ë²ˆì‹
-								map[nx][ny] = now.life;
-								push(p, { nx, ny, now.life * 2 });
-							}
-						}
-					}
-					if (--now.life)	// ì¤„ê¸°ì„¸í¬ëŠ” ì‹œê°„ì´ ì§€ë‚¨ì— ë”°ë¼ (Kê°€ ê°ì†Œí•¨ì— ë”°ë¼) ìƒëª… ê°ì†Œ
-						push(p, now);	// ì£½ì§€ ì•Šì€ ì„¸í¬ëŠ” íì— ë‹¤ì‹œ ì‚½ì…
+			for (int life = 10; life > 0; life--) {	// »ı¸í·Â ¼öÄ¡°¡ ³ôÀº ¼¼Æ÷ ¿ì¼±
+				int size = q[life].size();
+				while (size--) {	// »õ·Ó°Ô Áõ½ÄµÇ´Â ¼¼Æ÷¸¦ Á¦¿ÜÇÏ°í ¼öÇà
+					cell now = q[life].front(); q[life].pop();
+					if (now.t == life)	// ÇöÀç±îÁöÀÇ °æ°ú ½Ã°£ÀÌ ¼¼Æ÷ÀÇ »ı¸í·Â°ú µ¿ÀÏÇÑ °æ¿ì
+						proliferate(q, now);	// Áõ½Ä
+					if (--now.t)	// ½Ã°£ °æ°ú ÈÄ ¾ÆÁ÷ »ì¾ÆÀÖÀ¸¸é
+						q[life].push(now);	// Å¥¿¡ »ğÀÔ
 				}
 			}
 		}
-
-		// ì¶œë ¥ë¶€
-		for (int p = 0; p < 10; p++)
-			ans += size(p);
-
+		//Ãâ·ÂºÎ
+		for (int life = 10; life > 0; life--)
+			ans += q[life].size();		// ÇöÀç±îÁö »ì¾ÆÀÖ´Â (Å¥¿¡ Á¸ÀçÇÏ´Â) ¼¼Æ÷ ¼ö ÇÕ»ê
 		printf("#%d %d\n", t, ans);
-		reset();	// ì´ˆê¸°í™”
+		memset(map, 0, sizeof(map));	// ´ÙÀ½ Å×½ºÆ®¸¦ À§ÇÑ ÃÊ±âÈ­
 	}
 	return 0;
 }
