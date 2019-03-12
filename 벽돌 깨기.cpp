@@ -1,100 +1,80 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXRQm6qfL0DFAUo&categoryId=AWXRQm6qfL0DFAUo&categoryType=CODE
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXRQm6qfL0DFAUo
 */
 
 #include <cstdio>
-#define QUEUESIZE	15 * 12
+#include <queue>
 using namespace std;
-typedef struct { int h, w, r; } block;
-block q[QUEUESIZE];
-int map[15][12], drop[4];
-int N, W, H, begin, end, ans;
-
-bool empty(void) { return begin == end; }
-void push(block b) { q[end++] = b; }
-block pop(void) { return q[begin++]; }
-
-// DFS
-void go(int n) {
-	if (n == N) {
-		int cpy[15][12], cnt = 0;
-		// Îßµ Ïπ¥Ìîº
-		for (int h = 0; h < H; h++)
-			for (int w = 0; w < W; w++)
-				cpy[h][w] = map[h][w];
-
-		for (int i = 0; i < N; i++) {
-			begin = end = 0;
-			// Íµ¨Ïä¨ ÎÇôÌïò ÏßÄÏ†ê ÌÉêÏÉâ
-			for (int h = 0; h < H; h++) {
-				if (cpy[h][drop[i]] > 0) {
-					push({ h, drop[i], cpy[h][drop[i]] });
-					break;
+typedef struct { int x, y, r; } block;
+int map[15][12], cpy[15][12], drop_cols[4];
+int dx[4] = { 0, 0, 1, -1 };
+int dy[4] = { 1, -1, 0, 0 };
+int N, W, H, ans;
+// ∫Æµπ ≥´«œ
+void drop(void) {
+	for (int w = 0; w < W; w++) {
+		for (int h = H - 1; h > 0; h--) {
+			if (!cpy[h][w]) {
+				for (int hh = h - 1; hh >= 0; hh--) {
+					if (cpy[hh][w]) {
+						cpy[h--][w] = cpy[hh][w];
+						cpy[hh][w] = 0;
+					}
 				}
+				break;
 			}
-			// BFS
-			// Ìè≠Î∞ú
-			while (!empty()) {
-				block b = pop();
-				cpy[b.h][b.w] = 0;
-				for (int range = 1; range < b.r; range++) {
-					// ÏÉÅÌïòÏ¢åÏö∞ Ìè≠Î∞ú Ïãú Ìï¥Îãπ Î∏îÎ°ù Í∞íÏùÑ 0ÏúºÎ°ú Î≥ÄÍ≤ΩÌïòÎäî Ïù¥Ïú†:
-					// Ïó∞ÏáÑÌè≠Î∞úÎ°ú Ïù¥ÎØ∏ ÌÅêÏóê ÎÑ£ÏùÄ Î∏îÎ°ùÏù¥ Îã§Ïùå Ïó∞ÏáÑÌè≠Î∞ú Îïå ÎòêÎã§Ïãú Îì§Ïñ¥Í∞à Ïàò ÏûàÍ∏∞ ÎïåÎ¨∏Ïóê
-					// ÏÉÅ
-					if (b.h - range >= 0 && cpy[b.h - range][b.w] > 0) {
-						push({ b.h - range, b.w, cpy[b.h - range][b.w] });
-						cpy[b.h - range][b.w] = 0;
-					}
-					// Ìïò
-					if (b.h + range < H && cpy[b.h + range][b.w] > 0) {
-						push({ b.h + range, b.w, cpy[b.h + range][b.w] });
-						cpy[b.h + range][b.w] = 0;
-					}
-					// Ï¢å
-					if (b.w - range >= 0 && cpy[b.h][b.w - range] > 0) {
-						push({ b.h, b.w - range, cpy[b.h][b.w - range] });
-						cpy[b.h][b.w - range] = 0;
-					}
-					// Ïö∞
-					if (b.w + range < W && cpy[b.h][b.w + range] > 0) {
-						push({ b.h, b.w + range, cpy[b.h][b.w + range] });
-						cpy[b.h][b.w + range] = 0;
-					}
-					// ÏãúÍ∞Ñ Ï¥àÍ≥º
-					//int nh[4] = { b.h - range, b.h + range, b.h, b.h };
-					//int nw[4] = { b.w, b.w, b.w - range, b.w + range };
-					//for (int i = 0; i < 4; i++) {
-					//	if (0 <= nh[i] && nh[i] < H && 0 <= nw[i] && nw[i] < W)
-					//		if (cpy[nh[i]][nw[i]] > 0) {
-					//			push({ nh[i], nw[i], cpy[nh[i]][nw[i]] });
-					//			cpy[nh[i]][nw[i]] = 0;
-					//		}
-					//}
-				}
-			}
-			// Î≤ΩÎèå ÎÇôÌïò
-			for (int w = 0; w < W; w++)
-				for (int h = H - 1; h > 0; h--)
-					if (cpy[h][w] == 0)
-						for (int hh = h - 1; hh >= 0; hh--)
-							if (cpy[hh][w] > 0) {
-								cpy[h][w] = cpy[hh][w];
-								cpy[hh][w] = 0;
-								break;
-							}
 		}
-		// ÎÇ®ÏùÄ Î≤ΩÎèå ÏÑ∏Í∏∞
-		for (int h = 0; h < H; h++)
-			for (int w = 0; w < W; w++)
-				if (cpy[h][w] > 0)
-					cnt++;
-		if (ans > cnt)
-			ans = cnt;
-		return;
+	}
+}
+// øœº∫µ» drop_cols∏¶ ¿ÃøÎ«œø© Ω√πƒ∑π¿Ãº«
+int simulation(void) {
+	queue<block> q;
+	int ret = 0;
+	// ∏  ƒ´««
+	for (int h = 0; h < H; h++)
+		for (int w = 0; w < W; w++)
+			cpy[h][w] = map[h][w];
+
+	// N»∏ ±∏ΩΩ ≥´«œ
+	for (int i = 0; i < N; i++) {
+		int w = drop_cols[i];	// ±∏ΩΩ ≥´«œ ø≠
+		for (int h = 0; h < H; h++) {	// ±∏ΩΩ¿Ã ∂≥æÓ¡˙ ∫Æµπ ¿ßƒ° ≈Ωªˆ
+			if (cpy[h][w]) {
+				q.push({ h, w, cpy[h][w] });
+				cpy[h][w] = 0;
+				break;
+			}
+		}
+		while (!q.empty()) {
+			block b = q.front(); q.pop();
+			for (int r = 1; r < b.r; r++) {
+				for (int d = 0; d < 4; d++) {
+					int nx = b.x + dx[d] * r, ny = b.y + dy[d] * r;
+					if (0 <= nx && nx < H && 0 <= ny && ny < W && cpy[nx][ny]) {
+						q.push({ nx, ny, cpy[nx][ny] });
+						cpy[nx][ny] = 0;
+					}
+				}
+			}
+		}
+		drop();
 	}
 
-	for (int i = 0; i < W; i++) {
-		drop[n] = i;
+	// ≥≤¿∫ ∫Æµπ ∞≥ºˆ π›»Ø
+	for (int h = 0; h < H; h++)
+		for (int w = 0; w < W; w++)
+			if (cpy[h][w])
+				ret++;
+	return ret;
+}
+
+void go(int n) {
+	if (n == N) {	// º¯ø≠ øœº∫
+		ans = min(ans, simulation());
+		return;
+	}
+	for (int w = 0; w < W; w++) {
+		drop_cols[n] = w;
 		go(n + 1);
 	}
 }
@@ -103,18 +83,15 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-
-		// ÏûÖÎ†•Î∂Ä
+		// ¿‘∑¬∫Œ
 		scanf("%d %d %d", &N, &W, &H);
 		for (int h = 0; h < H; h++)
 			for (int w = 0; w < W; w++)
 				scanf("%d", &map[h][w]);
-
-		// Ï≤òÎ¶¨Î∂Ä
+		// √≥∏Æ∫Œ
 		ans = 2e9;
 		go(0);
-
-		// Ï∂úÎ†•Î∂Ä
+		// √‚∑¬∫Œ
 		printf("#%d %d\n", t, ans);
 	}
 
