@@ -1,68 +1,62 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5VwAr6APYDFAWu&categoryId=AV5VwAr6APYDFAWu&categoryType=CODE
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5VwAr6APYDFAWu
 */
 
 #include <cstdio>
 using namespace std;
 
-bool visited[101];
+bool check[101];
 int map[20][20];
-int dxy[4][2] = { { 1, 1 },{ 1, -1 },{ -1, -1 },{ -1, 1 } };	// ì‹œê³„ë°©í–¥ìœ¼ë¡œ 12ì‹œë¶€í„° íšŒì „
-int N, xs, ys, ans;
+int dx[4] = { 1, 1, -1, -1 };	// ½Ã°è¹æÇâ
+int dy[4] = { 1, -1, -1, 1 };	// ½Ã°è¹æÇâ
+int N, x0, y0, ans;
+
+int max(int a, int b) { return a >= b ? a : b; }
 
 void go(int x, int y, int d, int n) {
-	if (x == xs && y == ys) {
-		// í•œ ë°”í€´ ìˆœíšŒ í›„ ì‹œì‘ì§€ì ìœ¼ë¡œ ëŒì•„ì˜¨ ê²½ìš°
-		if (visited[map[x][y]]) {
-			if (ans < n)
-				ans = n;
+	if (x == x0 && y == y0) {	// ½ÃÀÛÁ¡
+		if (check[map[x][y]]) {	// ÇÑ ¹ÙÄû µ¹¾Æ¿Â °æ¿ì
+			ans = max(ans, n);
 			return;
 		}
+		// ½ÃÀÛÁ¡°ú ´ÙÀ½ ÁöÁ¡ µğÀúÆ®°¡ °°Àº °æ¿ì ÁøÇàÇÏÁö ¾ÊÀ½
+		if (map[x][y] == map[x + 1][y + 1])	return;
 
-		// íƒìƒ‰ ì‹œì‘ì¸ ê²½ìš° í˜„ì¬ ë””ì €íŠ¸ì™€ ì˜¤ë¥¸ìª½ í•˜ë‹¨ì˜ ë””ì €íŠ¸ê°€ ê°™ë‹¤ë©´ íƒìƒ‰í•˜ì§€ ì•ŠìŒ
-		if (map[x + 1][y + 1] == map[x][y])
-			return;
+		check[map[x][y]] = true;
+		go(x + 1, y + 1, d, n + 1);	// ½ÃÀÛÁ¡¿¡¼­´Â ¿À¸¥ÂÊ ¾Æ·¡·Î ÁøÇà
+		check[map[x][y]] = false;
+		return;
+	}
 
-		// ì‹œì‘ì§€ì ì—ì„œ íƒìƒ‰ì€ í•­ìƒ ì˜¤ë¥¸ìª½ í•˜ë‹¨ìœ¼ë¡œ ì§„í–‰
-		visited[map[x][y]] = true;
-		go(x + 1, y + 1, d, n + 1);
-		visited[map[x][y]] = false;
+	check[map[x][y]] = true;
+	// d = 3ÀÎ °æ¿ì¸¦ Á¦¿ÜÇÏ°í µ¿ÀÏ¹æÇâ ÁøÇà È¤Àº ½Ã°è¹æÇâ È¸Àü
+	// d = 3ÀÎ °æ¿ì´Â µ¿ÀÏ¹æÇâ¸¸ ÁøÇà
+	for (int nd = d; nd <= d + 1 && nd < 4; nd++) {
+		int nx = x + dx[nd], ny = y + dy[nd];
+		// ½ÃÀÛÁ¡º¸´Ù ³ôÀÌ ¿Ã¶ó°¡Áö ¾ÊÀ½
+		if (x0 <= nx && nx < N && 0 <= ny && ny < N)
+			// ¸ÔÁö ¾ÊÀº µğÀúÆ®°Å³ª ½ÃÀÛÁ¡ÀÎ °æ¿ì
+			if (!check[map[nx][ny]] || (nx == x0 && ny == y0))
+				go(nx, ny, nd, n + 1);
 	}
-	else {
-		visited[map[x][y]] = true;
-		// ë‹¤ìŒ ë°©í–¥ì€ ì´ì „ ì§„í–‰ ë°©í–¥ê³¼ ë™ì¼í•˜ê±°ë‚˜ ì‹œê³„ë°©í–¥ì— ë§ê²Œ ë³€ê²½
-		for (int nd = d; nd <= d + 1; nd++) {
-			int nx = x + dxy[nd][0], ny = y + dxy[nd][1];
-			// nxëŠ” ì‹œì‘ì§€ì ë³´ë‹¤ ìœ„ë¡œ ë„˜ì–´ê°ˆ ìˆ˜ ì—†ìŒ
-			if (xs <= nx && nx < N && 0 <= ny && ny < N) {
-				// ë¨¹ì§€ ì•Šì€ ë””ì €íŠ¸ì´ê±°ë‚˜ ì‹œì‘ì§€ì ì¸ ê²½ìš°ë§Œ ì§„í–‰
-				if (!visited[map[nx][ny]] || (nx == xs && ny == ys))
-					go(nx, ny, nd, n + 1);
-			}
-		}
-		visited[map[x][y]] = false;
-	}
+	check[map[x][y]] = false;
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ì…ë ¥ë¶€
+		// ÀÔ·ÂºÎ
 		scanf("%d", &N);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &map[i][j]);
-
-		// ì²˜ë¦¬ë¶€
+		// Ã³¸®ºÎ
 		ans = -1;
-		// ëŒ€ê°ì„  ì¢Œ/ìš°, ë˜ëŠ” í•˜ë‹¨ìœ¼ë¡œ ì§„í–‰í•˜ì§€ ëª»í•˜ëŠ” ì‹œì‘ì§€ì ì„ ì œì™¸í•˜ê³  íƒìƒ‰
-		for (xs = 0; xs < N - 2; xs++)
-			for (ys = 1; ys < N - 1; ys++)
-				// ì‹œì‘ì§€ì ì—ì„œ íƒìƒ‰ì€ í•­ìƒ ì˜¤ë¥¸ìª½ í•˜ë‹¨ìœ¼ë¡œ ì§„í–‰
-				go(xs, ys, 0, 0);
-
-		//ì¶œë ¥ë¶€
+		for (x0 = 0; x0 < N - 2; x0++)
+			for (y0 = 1; y0 < N - 1; y0++)
+				go(x0, y0, 0, 0);
+		// Ãâ·ÂºÎ
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
