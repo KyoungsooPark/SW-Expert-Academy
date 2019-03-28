@@ -1,108 +1,91 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXRDL1aeugDFAUo&categoryId=AWXRDL1aeugDFAUo&categoryType=CODE&&&
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWXRDL1aeugDFAUo
 */
 
 #include <cstdio>
 using namespace std;
-typedef struct { int x, y; } person;
-int map[11][11], move[2][101], p[8];
-int dx[5] = { 0, -1, 0, 1, 0 };	// ì´ë™í•˜ì§€ ì•ŠìŒ, ìƒ, ìš°, í•˜, ì¢Œ
-int dy[5] = { 0, 0, 1, 0, -1 };	// ì´ë™í•˜ì§€ ì•ŠìŒ, ìƒ, ìš°, í•˜, ì¢Œ
+typedef struct { int X, Y, C, P; } BC;
+typedef struct { int X, Y; } person;
+enum { PA, PB };
 
+BC AP[8];
+person psn[2];
+int map[11][11], moving[2][101];
+int dx[5] = { 0, -1, 0, 1, 0 };	// ÀÌµ¿ ¾ÈÇÔ, »ó, ¿ì, ÇÏ, ÁÂ
+int dy[5] = { 0, 0, 1, 0, -1 };	// ÀÌµ¿ ¾ÈÇÔ, »ó, ¿ì, ÇÏ, ÁÂ
+int M, A, ans;
+
+bool valid(int x, int y) { return 1 <= x && x <= 10 && 1 <= y && y <= 10; }
+int max(int a, int b) { return a > b ? a : b; }
 int abs(int num) { return num >= 0 ? num : -num; }
-int max(int a, int b) { return a >= b ? a : b; }
-
-// map ì´ˆê¸°í™”
-void reset(void) {
-	for (int i = 1; i <= 10; i++)
-		for (int j = 1; j <= 10; j++)
-			map[i][j] = 0;
-}
-
-// mapì— ap ë²ˆì§¸ APì˜ ìœ„ì¹˜(x, y)ë¡œë¶€í„° ì¶©ì „ ë²”ìœ„(c)ë¥¼ bitë¡œ í‘œì‹œ
-void set(int x_a, int y_a, int c, int ap) {
-	for (int x_b = x_a - c; x_b <= x_a + c; x_b++) {
-		for (int y_b = y_a - c; y_b <= y_a + c; y_b++) {
-			// mapì—ì„œ ë²—ì–´ë‚˜ì§€ ì•ŠëŠ” ë²”ìœ„ ë‚´ì—ì„œ
-			if (1 <= x_b && x_b <= 10 && 1 <= y_b && y_b <= 10) {
-				// í•´ë‹¹ ìœ„ì¹˜ê°€ ì¶©ì „ ë²”ìœ„ c ë‚´ì— ë“ ë‹¤ë©´
-				if (abs(x_a - x_b) + abs(y_a - y_b) <= c)
-					// bitë¡œ í‘œê¸° (ì„œë¡œ ë‹¤ë¥¸ APê°„ ì¶©ì „ ë²”ìœ„ê°€ ì¤‘ì²©ë  ìˆ˜ ìˆìœ¼ë¯€ë¡œ)
-					map[x_b][y_b] |= (1 << ap);
+int range(int x1, int y1, int x2, int y2) { return abs(x1 - x2) + abs(y1 - y2); }
+// map¿¡ APÀÇ ÃæÀü ¹üÀ§¸¦ AP ¹øÈ£·Î Ç¥½Ã
+void check(void) {
+	for (int i = 0; i < A; i++) {
+		BC ap = AP[i];
+		for (int x = ap.X - ap.C; x <= ap.X + ap.C; x++) {
+			for (int y = ap.Y - ap.C; y <= ap.Y + ap.C; y++) {
+				if (valid(x, y) && range(x, y, ap.X, ap.Y) <= ap.C)
+					map[x][y] |= (1 << i);	// AP ¹øÈ£¸¦ bit·Î Ç¥½Ã
 			}
 		}
 	}
 }
 
-// í•œ ì‚¬ëŒë§Œ ì¶©ì „ ë²”ìœ„ ë‚´ì¸ ê²½ìš°, ìµœëŒ€ ì¶©ì „ëŸ‰ ë¦¬í„´
-int max_p(int num, int nAP) {
-	int ret = 0;
-	for (int i = 0; i < nAP; i++)
-		if (num & (1 << i))
-			ret = max(ret, p[i]);
-	return ret;
-}
-
-// A, B ëª¨ë‘ ì¶©ì „ ë²”ìœ„ ë‚´ì¸ ê²½ìš°, ì¶©ì „ëŸ‰ í•©ì˜ ìµœëŒ€ê°’ ë¦¬í„´
-int max_sum(int a, int b, int nAP) {
-
-	int ret = 0;
-	for (int i = 0; i < nAP; i++) {
-		if (a & (1 << i)) {
-			for (int j = 0; j < nAP; j++) {
-				if (b & (1 << j)) {
-					if (i == j)
-						ret = max(ret, p[i]);
-					else
-						ret = max(ret, p[i] + p[j]);
-				}
-			}
+void charge(void) {
+	int temp = 0;
+	if (map[psn[PA].X][psn[PA].Y]) {	// »ç¿ëÀÚ A°¡ ÃæÀü ¹üÀ§
+		if (map[psn[PB].X][psn[PB].Y]) {	// »ç¿ëÀÚ Bµµ ÃæÀü ¹üÀ§
+			for (int i = 0; i < A; i++)	// »ç¿ëÀÚ AÀÇ ÃæÀü °¡´É AP Å½»ö
+				if (map[psn[PA].X][psn[PA].Y] & (1 << i))
+					for (int j = 0; j < A; j++)	// »ç¿ëÀÚ BÀÇ ÃæÀü °¡´É AP Å½»ö
+						if (map[psn[PB].X][psn[PB].Y] & (1 << j)) {
+							if (i == j)	// »ç¿ëÀÚ A¿Í B°¡ °°Àº AP¿¡ Á¢¼ÓÇÏ´Â °æ¿ì
+								temp = max(temp, AP[j].P);
+							else	// »ç¿ëÀÚ A¿Í B°¡ ´Ù¸¥ AP¿¡ Á¢¼ÓÇÏ´Â °æ¿ì
+								temp = max(temp, AP[i].P + AP[j].P);
+						}
+		}
+		else {	// »ç¿ëÀÚ A¸¸ ÃæÀü ¹üÀ§
+			for (int i = 0; i < A; i++)
+				if (map[psn[PA].X][psn[PA].Y] & (1 << i))
+					temp = max(temp, AP[i].P);
 		}
 	}
-	return ret;
+	else if (map[psn[PB].X][psn[PB].Y]) {	// »ç¿ëÀÚ B¸¸ ÃæÀü ¹üÀ§
+		for (int i = 0; i < A; i++)	// ÃæÀü °¡´É AP Å½»ö
+			if (map[psn[PB].X][psn[PB].Y] & (1 << i))
+				temp = max(temp, AP[i].P);
+	}
+	ans += temp;
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		person A = { 1, 1 }, B = { 10, 10 };	// A, Bì˜ ì´ˆê¸° ìœ„ì¹˜ ì„¤ì •
-		int M, AP, sum = 0;
-
-		// ì…ë ¥ë¶€
-		scanf("%d %d", &M, &AP);
-		for (int i = 0; i < 2; i++)	// A, Bì˜ ì´ë™ ê²½ë¡œ ì…ë ¥
-			for (int m = 1; m <= M; m++)	// move[i][0]ì€ ì´ë™í•˜ì§€ ì•Šì•˜ì„ ë•Œì˜ ìƒíƒœ ê²€ì‚¬ë¥¼ ìœ„í•´
-				scanf("%d", &move[i][m]);
-		for (int ap = 0; ap < AP; ap++) {	// APì˜ ìœ„ì¹˜, ì¶©ì „ ë²”ìœ„, ì¶©ì „ ì„±ëŠ¥ ì…ë ¥
-			int x, y, c;
-			scanf("%d %d %d %d", &y, &x, &c, &p[ap]);
-			set(x, y, c, ap);	// mapì— ap ë²ˆì§¸ APì˜ ì¶©ì „ ë²”ìœ„ë¥¼ í‘œì‹œ
-		}
-
-		// ì²˜ë¦¬ë¶€
+		// ÀÔ·ÂºÎ
+		scanf("%d %d", &M, &A);
+		// »ç¿ëÀÚ ÀÌµ¿ Á¤º¸
+		for (int p = PA; p <= PB; p++)
+			for (int m = 1; m <= M; m++)
+				scanf("%d", &moving[p][m]);
+		// AP Á¤º¸
+		for (int i = 0; i < A; i++)
+			scanf("%d %d %d %d", &AP[i].Y, &AP[i].X, &AP[i].C, &AP[i].P);
+		// Ã³¸®ºÎ
+		check();
+		ans = 0, psn[PA] = { 1, 1 }, psn[PB] = { 10, 10 };
 		for (int m = 0; m <= M; m++) {
-			// A, Bì˜ ìœ„ì¹˜ ì´ë™
-			A.x += dx[move[0][m]], A.y += dy[move[0][m]];
-			B.x += dx[move[1][m]], B.y += dy[move[1][m]];
-
-			if (map[A.x][A.y] > 0) {
-				// A, B ëª¨ë‘ ë¬´ì„  ì¶©ì „ ë²”ìœ„
-				if (map[B.x][B.y] > 0)
-					sum += max_sum(map[A.x][A.y], map[B.x][B.y], AP);
-
-				// Aë§Œ ë¬´ì„  ì¶©ì „ ë²”ìœ„
-				else
-					sum += max_p(map[A.x][A.y], AP);
-			}
-			// Bë§Œ ë¬´ì„  ì¶©ì „ ë²”ìœ„
-			else if (map[B.x][B.y] > 0)
-				sum += max_p(map[B.x][B.y], AP);
+			psn[PA].X += dx[moving[PA][m]], psn[PA].Y += dy[moving[PA][m]];
+			psn[PB].X += dx[moving[PB][m]], psn[PB].Y += dy[moving[PB][m]];
+			charge();
 		}
-
-		// ì¶œë ¥ë¶€
-		printf("#%d %d\n", t, sum);
-		reset();
+		// Ãâ·ÂºÎ
+		printf("#%d %d\n", t, ans);
+		for (int x = 1; x <= 10; x++)
+			for (int y = 1; y <= 10; y++)
+				map[x][y] = 0;
 	}
 	return 0;
 }
