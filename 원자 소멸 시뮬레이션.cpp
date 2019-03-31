@@ -3,60 +3,47 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 */
 
 #include <cstdio>
-#define QUEUESIZE	1000
+#include <queue>
 using namespace std;
 typedef struct { int x, y, d, k; } atom;
 
-atom q[1000];
-int map[4001][4001];
-int dx[4] = { -1, 1, 0, 0 };
-int dy[4] = { 0, 0, -1, 1 };
-int begin, end;
-
-bool empty(void) { return begin == end; }
-void push(atom a) { q[end++] = a; if (end == QUEUESIZE) end = 0; }
-atom pop(void) { atom ret = q[begin++]; if (begin == QUEUESIZE) begin = 0; return ret; }
+queue<atom> q;
+int map[4001][4001];	// -1000 ~ 1000 => 0 ~ 2000 => 0 ~ 4000 (0.5ÃÊ ´ÜÀ§)
+int dx[4] = { -1, 1, 0, 0 };	// »ó, ÇÏ, ÁÂ, ¿ì
+int dy[4] = { 0, 0, -1, 1 };	// »ó, ÇÏ, ÁÂ, ¿ì
+int N, ans;
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		int N, ans = 0;
-		begin = end = 0;
-
-		// ì…ë ¥ë¶€
+		// ÀÔ·ÂºÎ
 		scanf("%d", &N);
-		for (int n = 0; n < N; n++) {
+		for (int i = 0; i < N; i++) {
 			int x, y, d, k;
 			scanf("%d %d %d %d", &y, &x, &d, &k);
-			// 1ì´ˆ ë‹¨ìœ„ë¥¼ 0.5ì´ˆ ë‹¨ìœ„ë¡œ ë³€ê²½
-			x = 4000 - 2 * (x + 1000), y = 2 * (y + 1000);
-			push({ x, y, d, k });	// ì´ˆê¸° ì›ìë“¤ì˜ ìœ„ì¹˜ íì— ì‚½ì…
-			map[x][y] = k;	// ì›ì ìœ„ì¹˜ì— ì—ë„ˆì§€ë¥¼ í‘œì‹œ
+			x = 2000 - 2 * x, y = 2000 + 2 * y;
+			q.push({ x, y, d, k });
+			map[x][y] = k;	// ÃÊ±â ¿øÀÚ À§Ä¡ÀÇ ¿¡³ÊÁö Å©±â Ç¥½Ã
 		}
-
-		// ì²˜ë¦¬ë¶€
-		while (!empty()) {
-			atom now = pop();
-			// í˜„ì¬ ìœ„ì¹˜ì˜ ì›ìê°€ ì†Œë©¸í•œ ê²½ìš°
-			if (map[now.x][now.y] == 0)
-				continue;
-			// í˜„ì¬ ìœ„ì¹˜ì— ë‘ ê°œ ì´ìƒì˜ ì›ìê°€ ì¡´ì¬í•˜ëŠ” ê²½ìš°
-			if (map[now.x][now.y] > now.k) {
-				ans += map[now.x][now.y];	// ì¶•ì ëœ ëª¨ë“  ì—ë„ˆì§€ë¥¼ ë°©ì¶œ í›„
-				map[now.x][now.y] = 0;		// ì†Œë©¸
-				continue;
+		// Ã³¸®ºÎ
+		ans = 0;
+		while (!q.empty()) {
+			atom now = q.front(); q.pop();
+			if (map[now.x][now.y] > now.k) {	// ÇöÀç À§Ä¡¿¡ ¿©·¯ °³ÀÇ ¿øÀÚ Á¸Àç
+				ans += map[now.x][now.y];	// Æø¹ß. ¹æÃâ ¿¡³ÊÁö ÇÕ»ê
+				map[now.x][now.y] = 0;	// ÇØ´ç À§Ä¡ÀÇ ¿¡³ÊÁö ¸ğµÎ ¹æÃâ
 			}
-			map[now.x][now.y] = 0;	// ì›ìê°€ ì´ë™í•˜ì—¬ í˜„ì¬ ìœ„ì¹˜ì˜ ì—ë„ˆì§€ 0ìœ¼ë¡œ ë³€ê²½
-			now.x += dx[now.d], now.y += dy[now.d];	// ì›ìì˜ ë‹¤ìŒ ìœ„ì¹˜ ê³„ì‚°
-			// ë‹¤ìŒ ìœ„ì¹˜ê°€ ë§µì˜ ë²”ìœ„ ë‚´ì¼ ê²½ìš°
-			if (0 <= now.x && now.x <= 4000 && 0 <= now.y && now.y <= 4000) {
-				map[now.x][now.y] += now.k;	// í•´ë‹¹ ìœ„ì¹˜ì— ì›ìì˜ ì—ë„ˆì§€ë¥¼ ì¶•ì 
-				push(now);
+			else if (map[now.x][now.y] == now.k) {	// ÇöÀç À§Ä¡¿¡ ÇÏ³ªÀÇ ¿øÀÚ¸¸ Á¸Àç
+				map[now.x][now.y] = 0;	// ¿øÀÚ ÀÌµ¿À» À§ÇØ ÇöÀç À§Ä¡ÀÇ ¿¡³ÊÁö ÃÊ±âÈ­
+				now.x += dx[now.d], now.y += dy[now.d];	// ¿øÀÚ ÀÌµ¿
+				if (0 <= now.x && now.x <= 4000 && 0 <= now.y && now.y <= 4000) {
+					map[now.x][now.y] += now.k;	// ÀÌµ¿ÇÑ À§Ä¡¿¡ ¿¡³ÊÁö ´©Àû
+					q.push(now);
+				}
 			}
 		}
-
-		// ì¶œë ¥ë¶€
+		// Ãâ·ÂºÎ
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
