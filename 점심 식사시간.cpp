@@ -8,49 +8,49 @@ https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId
 using namespace std;
 typedef struct { int x, y, nPerson; } stairs;
 typedef struct { int x, y, dst, time; } person;
-enum { DOWN, WAIT, MOVE };	// °è´Ü ÀÌµ¿ Áß, ´ë±â Áß, 
+enum { DOWN, WAIT, MOVE };
 vector<stairs> S;
 vector<person> v;
-queue<person> q[3];	// ½Ã¹Ä·¹ÀÌ¼ÇÀ» À§ÇÑ ¿ì¼±¼øÀ§Å¥
+queue<person> q[3];	// ì‹œë®¬ë ˆì´ì…˜ì„ ìœ„í•œ ìš°ì„ ìˆœìœ„í
 int map[10][10];
 int N, ans;
 
 int min(int a, int b) { return a < b ? a : b; }
-// ¿ì¼±¼øÀ§Å¥ empty ¿©ºÎ ¹İÈ¯
+// ìš°ì„ ìˆœìœ„í empty ì—¬ë¶€ ë°˜í™˜
 bool empty(void) { return q[DOWN].empty() && q[WAIT].empty() && q[MOVE].empty(); }
-// person pÀÇ ¸ñÇ¥ °è´ÜÀ¸·Î ÀÌµ¿
+// person pì˜ ëª©í‘œ ê³„ë‹¨ìœ¼ë¡œ ì´ë™
 void move(person &p) {
 	if (S[p.dst].x < p.x)		p.x--;
 	else if (S[p.dst].x > p.x)	p.x++;
 	else if (S[p.dst].y < p.y)	p.y--;
 	else if (S[p.dst].y > p.y)	p.y++;
 }
-// ÀÌµ¿ ¹× ÁöÁ¤µÈ °è´Ü ³»·Á°¡´Â ½Ã¹Ä·¹ÀÌ¼Ç
+// ì´ë™ ë° ì§€ì •ëœ ê³„ë‹¨ ë‚´ë ¤ê°€ëŠ” ì‹œë®¬ë ˆì´ì…˜
 void simulation(void) {
 	int time = 0;
-	for (person p : v)	// ¸ğµç »ç¶÷À» ¿ì¼±¼øÀ§Å¥¿¡ »ğÀÔ
+	for (person p : v)	// ëª¨ë“  ì‚¬ëŒì„ ìš°ì„ ìˆœìœ„íì— ì‚½ì…
 		q[MOVE].push(p);
 	while (!empty()) {
 		time++;
-		// ¿ì¼±¼øÀ§(DOWN, WAIT, MOVE)¿¡ µû¶ó ¼öÇà
+		// ìš°ì„ ìˆœìœ„(DOWN, WAIT, MOVE)ì— ë”°ë¼ ìˆ˜í–‰
 		for (int priority = DOWN; priority <= MOVE; priority++) {
 			int size = q[priority].size();
 			while (size--) {
 				person p = q[priority].front(); q[priority].pop();
 				switch (priority) {
-				case DOWN:	// °è´Ü
-					if (--p.time == 0) S[p.dst].nPerson--;	// °è´Ü ³»·Á°¡´Â ½Ã°£ÀÌ ¸ğµÎ Áö³­ °æ¿ì
+				case DOWN:	// ê³„ë‹¨
+					if (--p.time == 0) S[p.dst].nPerson--;	// ê³„ë‹¨ ë‚´ë ¤ê°€ëŠ” ì‹œê°„ì´ ëª¨ë‘ ì§€ë‚œ ê²½ìš°
 					else q[DOWN].push(p);
 					break;
-				case WAIT:	// °è´Ü¿¡¼­ ´ë±â
-							// °è´ÜÀ» ³»·Á°¡´Â ÀÎ¿øÀÌ 3¸í ¹Ì¸¸ÀÎ °æ¿ì °è´Ü ³»·Á°¡±â ½ÃÀÛ
+				case WAIT:	// ê³„ë‹¨ì—ì„œ ëŒ€ê¸°
+							// ê³„ë‹¨ì„ ë‚´ë ¤ê°€ëŠ” ì¸ì›ì´ 3ëª… ë¯¸ë§Œì¸ ê²½ìš° ê³„ë‹¨ ë‚´ë ¤ê°€ê¸° ì‹œì‘
 					if (S[p.dst].nPerson < 3) { p.time = map[p.x][p.y]; S[p.dst].nPerson++; q[DOWN].push(p); }
 					else q[WAIT].push(p);
 					break;
-				case MOVE:	// °è´ÜÀ¸·Î ÀÌµ¿
-					move(p);	// person pÀÇ ¸ñÇ¥ °è´ÜÀ¸·Î ÀÌµ¿
-					if (p.x == S[p.dst].x && p.y == S[p.dst].y) q[WAIT].push(p);	// °è´Ü µµÂø
-					else q[MOVE].push(p);	// µµÂø ¸øÇÑ °æ¿ì °è¼Ó move ¼öÇà
+				case MOVE:	// ê³„ë‹¨ìœ¼ë¡œ ì´ë™
+					move(p);	// person pì˜ ëª©í‘œ ê³„ë‹¨ìœ¼ë¡œ ì´ë™
+					if (p.x == S[p.dst].x && p.y == S[p.dst].y) q[WAIT].push(p);	// ê³„ë‹¨ ë„ì°©
+					else q[MOVE].push(p);	// ë„ì°© ëª»í•œ ê²½ìš° ê³„ì† move ìˆ˜í–‰
 					break;
 				}
 			}
@@ -58,9 +58,9 @@ void simulation(void) {
 	}
 	ans = min(ans, time);
 }
-// °è´ÜÀ» ¼±ÅÃÇÏ´Â ¸ğµç °æ¿ì Å½»ö
+// ê³„ë‹¨ì„ ì„ íƒí•˜ëŠ” ëª¨ë“  ê²½ìš° íƒìƒ‰
 void go(int n) {
-	if (n == v.size()) { simulation(); return; }	// °è´Ü ¼±ÅÃ ¿Ï·á ½Ã ½Ã¹Ä·¹ÀÌ¼Ç ¼öÇà
+	if (n == v.size()) { simulation(); return; }	// ê³„ë‹¨ ì„ íƒ ì™„ë£Œ ì‹œ ì‹œë®¬ë ˆì´ì…˜ ìˆ˜í–‰
 	for (int i = 0; i < 2; i++) { v[n].dst = i; go(n + 1); }
 }
 
@@ -68,19 +68,19 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d", &N);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++) {
 				scanf("%d", &map[i][j]);
-				if (map[i][j] == 1)	v.push_back({ i, j, 0 });	// »ç¶÷
-				else if (map[i][j] > 1)	S.push_back({ i, j, 0 });	// °è´Ü
+				if (map[i][j] == 1)	v.push_back({ i, j, 0 });	// ì‚¬ëŒ
+				else if (map[i][j] > 1)	S.push_back({ i, j, 0 });	// ê³„ë‹¨
 			}
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		ans = 2e9;
 		go(0);
-		S.clear(), v.clear();	// ´ÙÀ½ Å×½ºÆ®¸¦ À§ÇÑ º¤ÅÍ ÃÊ±âÈ­
-								// Ãâ·ÂºÎ
+		S.clear(), v.clear();	// ë‹¤ìŒ í…ŒìŠ¤íŠ¸ë¥¼ ìœ„í•œ ë²¡í„° ì´ˆê¸°í™”
+								// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
