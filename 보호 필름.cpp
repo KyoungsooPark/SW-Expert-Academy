@@ -1,75 +1,63 @@
-/*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do
-*/
-
 #include <cstdio>
 using namespace std;
 
-int film[13][20], film_cpy[13][20], change[13];
+int film[13][20], cpy[13][20], select[13];
 int D, W, K, ans;
 
-bool test(void) {
-	// ì•½í’ˆ íˆ¬ì—¬
-	for (int d = 0; d < D; d++) {
-		// ì•½í’ˆ íˆ¬ì—¬ ì•ˆí•¨
-		if (change[d] == -1)
-			for (int w = 0; w < W; w++)
-				film_cpy[d][w] = film[d][w];
-		// ì•½í’ˆ íˆ¬ì—¬
-		else
-			for (int w = 0; w < W; w++)
-				film_cpy[d][w] = change[d];
-	}
+int min(int a, int b) { return a < b ? a : b; }
 
-	// ì„±ëŠ¥ê²€ì‚¬
-	for (int w = 0; w < W; w++) {
-		int cnt = 1;
-		for (int d = 1; d < D; d++) {
-			cnt = film_cpy[d][w] == film_cpy[d - 1][w] ? cnt + 1 : 1;
-			if (cnt >= K)
-				break;
+bool validation(void) {
+	// ÇÊ¸§ Ä«ÇÇ
+	for (int i = 0; i < D; i++) {
+		if (select[i] == -1)	// i¹øÂ° Çà¿¡ ¾àÇ° ÅõÀÔ ¾ÈÇÔ
+			for (int j = 0; j < W; j++)
+				cpy[i][j] = film[i][j];
+		else	// i¹øÂ° Çà¿¡ ¾àÇ° ÅõÀÔ
+			for (int j = 0; j < W; j++)
+				cpy[i][j] = select[i];
+	}
+	for (int j = 0; j < W; j++) {	// j¹øÂ° ¿­ °Ë»ç
+		int cnt = 1;	// Æ¯¼ºÀÌ ¿¬¼ÓµÇ´Â È½¼ö
+		for (int i = 1; i < D; i++) {	// i¹øÂ° Çà °Ë»ç
+			if (cpy[i][j] == cpy[i - 1][j]) {	// ÀÌÀü Çà°ú Æ¯¼ºÀÌ µ¿ÀÏ
+				cnt++;
+				if (cnt == K)	// j¿­ ÇÕ°Ý ±âÁØ Åë°ú
+					break;
+			}
+			else	// Æ¯¼ºÀÌ ¿¬¼ÓµÇÁö ¾ÊÀ½
+				cnt = 1;	// ´Ù½Ã Ä«¿îÆ®
 		}
-		if (cnt < K)
+		if (cnt != K)	// j¿­ ÇÕ°Ý ±âÁØ ¹Ì´Þ
 			return false;
 	}
-	return true;
+	return true;	// ¸ðµç ¿­ÀÌ ÇÕ°Ý ±âÁØ Åë°ú ½Ã true ¹ÝÈ¯
 }
 
-void go(int n, int cnt) {
+void go(int n, int num) {
 	if (n == D) {
-		if (test() && cnt < ans)
-			ans = cnt;
+		if (validation())
+			ans = min(ans, num);
 		return;
 	}
-
-	change[n] = -1; go(n + 1, cnt);	// n ë²ˆì§¸ ë§‰ì— ì•½í’ˆ íˆ¬ì—¬ ì•ˆí•¨
-	// í˜„ìž¬ê¹Œì§€ ì„±ëŠ¥ê²€ì‚¬ë¥¼ í†µê³¼í•œ ìµœì†Œ ì•½í’ˆ íˆ¬ìž… íšŸìˆ˜ë¥¼
-	// ì´ˆê³¼í•  ê²½ìš° ë”ì´ìƒ ì§„í–‰í•˜ì§€ ì•ŠìŒ
-	if (cnt == ans)
-		return;
-	change[n] = 0; go(n + 1, cnt + 1);	// n ë²ˆì§¸ ë§‰ì— ì•½í’ˆ A íˆ¬ì—¬
-	change[n] = 1; go(n + 1, cnt + 1);	// n ë²ˆì§¸ ë§‰ì— ì•½í’ˆ B íˆ¬ì—¬
+	if (ans == num)	return;	// ansº¸´Ù ´õ ¸¹Àº ÅõÀÔÀÌ ÇÊ¿äÇÑ °æ¿ì Áß´Ü
+	select[n] = -1; go(n + 1, num);		// ¾àÇ° ÅõÀÔ ¾ÈÇÔ
+	select[n] = 0;  go(n + 1, num + 1);	// ¾àÇ° A ÅõÀÔ
+	select[n] = 1;  go(n + 1, num + 1);	// ¾àÇ° B ÅõÀÔ
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ìž…ë ¥ë¶€
+		// ÀÔ·ÂºÎ
 		scanf("%d %d %d", &D, &W, &K);
-		for (int d = 0; d < D; d++)
-			for (int w = 0; w < W; w++)
-				scanf("%d", &film[d][w]);
-
-		// ì²˜ë¦¬ë¶€
-		if (K == 1) {
-			printf("#%d %d\n", t, 0);
-			continue;
-		}
+		for (int i = 0; i < D; i++)
+			for (int j = 0; j < W; j++)
+				scanf("%d", &film[i][j]);
+		// Ã³¸®ºÎ
 		ans = 2e9;
 		go(0, 0);
-		
-		// ì¶œë ¥ë¶€
+		// Ãâ·ÂºÎ
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
