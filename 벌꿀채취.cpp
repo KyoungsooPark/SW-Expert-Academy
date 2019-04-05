@@ -1,67 +1,46 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5V4A46AdIDFAWu
 */
 
 #include <cstdio>
 using namespace std;
-int map[10][10];
-int N, M, C;
 
-// ë²Œí†µ ì„ íƒ ë²”ìœ„ ë‚´ì—ì„œ ì±„ì·¨í•  ìˆ˜ ìˆëŠ” ê¿€ì˜ ìµœëŒ€ ì–‘ ê²€ì‚¬
-int search(int r, int c) {
-	int square_sum = 0;
+int map[10][10];
+int N, M, C, x1, y1, x2, y2, ans;
+
+int max(int a, int b) { return a > b ? a : b; }
+// ÁÖ¾îÁø ½ÃÀÛÁöÁ¡(x, y)ºÎÅÍ M°³ÀÇ ¹úÅë Áß ¼öÀÍÀÇ ÇÕÀÇ ÃÖ´ë°ª °è»ê
+int cal(int x, int y) {
+	int ret = 0, temp1, temp2;
 	for (int i = 1; i < (1 << M); i++) {
-		int sum = 0, temp_square_sum = 0;
-		for (int j = 0; j < M; j++) {
-			if (i & (1 << j)) {
-				sum += map[r][c + j];
-				temp_square_sum += map[r][c + j] * map[r][c + j];
-			}
-		}
-		if (sum <= C && square_sum < temp_square_sum)
-			square_sum = temp_square_sum;
+		temp1 = temp2 = 0;
+		for (int j = 0; j < M; j++)
+			if (i & (1 << j))
+				temp1 += map[x][y + j], temp2 += map[x][y + j] * map[x][y + j];
+		if (temp1 <= C)
+			ret = max(ret, temp2);
 	}
-	return square_sum;
+	return ret;
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ì…ë ¥ë¶€
+		// ÀÔ·ÂºÎ
 		scanf("%d %d %d", &N, &M, &C);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &map[i][j]);
-
-		// ì²˜ë¦¬ë¶€
-		int ans = 0, A = 0, B = 0;
-		for (int r1 = 0; r1 < N; r1++) {
-			for (int c1 = 0; c1 <= N - M; c1++) {
-				int square_sum = search(r1, c1);
-				// ì¼ê¾¼ Aê°€ ë” ë§ì€ ê¿€ì„ ì±„ì·¨í•  ìˆ˜ ìˆëŠ” ë²Œí†µì„ ì„ íƒí•œ ê²½ìš°
-				if (A < square_sum) {
-					A = square_sum;
-					B = 0;
-					// ì¼ê¾¼ Bì˜ ìµœì ì˜ ë²Œí†µ íƒìƒ‰
-					for (int r2 = r1; r2 < N; r2++) {
-						for (int c2 = 0; c2 <= N - M; c2++) {
-							if (r2 == r1) {
-								if (c2 < c1 + M || N - (c1 + M) < M)
-									continue;
-							}
-							square_sum = search(r2, c2);
-							if (B < square_sum)
-								B = square_sum;
-						}
-					}
-					if (ans < A + B)
-						ans = A + B;
-				}
-			}
-		}
-
-		// ì¶œë ¥ë¶€
+		// Ã³¸®ºÎ
+		ans = 0;
+		for (x1 = 0; x1 < N; x1++)
+			for (y1 = 0; y1 <= N - M; y1++)	// ÀÏ²Û1ÀÇ ½ÃÀÛÁ¡
+				for (x2 = x1; x2 < N; x2++)
+					for (y2 = x1 == x2 ? y1 + M : 0; y2 <= N - M; y2++)	// ÀÏ²Û2ÀÇ ½ÃÀÛÁ¡
+						if (y2 <= N - M)
+							ans = max(ans, cal(x1, y1) + cal(x2, y2));
+		// Ãâ·ÂºÎ
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;

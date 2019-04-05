@@ -1,92 +1,74 @@
 /*
-https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV597vbqAH0DFAVl&categoryId=AV597vbqAH0DFAVl&categoryType=CODE
+https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV597vbqAH0DFAVl
 */
 
 #include <cstdio>
-#define UP	1
-#define DOWN	2
-#define LEFT	3
-#define RIGHT	4
-
+#include <queue>
 using namespace std;
-typedef struct {
-	int cnt;	// ë¯¸ìƒë¬¼ì˜ ìˆ˜
-	int dir;	// ì§„í–‰ ë°©í–¥
-	int maxcnt;	// í•´ë‹¹ ì¹¸ìœ¼ë¡œ ì—¬ëŸ¬ êµ°ì§‘ì´ ì™”ì„ ê²½ìš° ê°€ì¥ í° êµ°ì§‘ì˜ ë¯¸ìƒë¬¼ì˜ ìˆ˜
-} node;
+typedef struct { int n, max; } point;
+typedef struct { int x, y, n, d; } microbe;
 
-node map[100][100];			// í˜„ì¬ ë¯¸ìƒë¬¼ ì •ë³´
-node next_map[100][100];	// 1ì‹œê°„ í›„ ë¯¸ìƒë¬¼ ì •ë³´
-int dx[5] = { 0, -1, 1, 0, 0 };
-int dy[5] = { 0, 0, 0, -1, 1 };
+point map[100][100], next_map[100][100];
+int dx[5] = { 0, -1, 1, 0, 0 };	// 1: »ó, 2: ÇÏ, 3: ÁÂ, 4: ¿ì
+int dy[5] = { 0, 0, 0, -1, 1 };	// 1: »ó, 2: ÇÏ, 3: ÁÂ, 4: ¿ì
 int N, M, K;
 
-void move(void) {
-	for (int x = 0; x < N; x++) {
-		for (int y = 0; y < N; y++) {
-			if (map[x][y].cnt > 0) {
-				int nx = x + dx[map[x][y].dir];
-				int ny = y + dy[map[x][y].dir];
-
-				// ì•½í’ˆ ì²˜ë¦¬ëœ ê³³ì¸ ê²½ìš°
-				if (nx == 0 || nx == N - 1 || ny == 0 || ny == N - 1) {
-					next_map[nx][ny].cnt = map[x][y].cnt / 2;
-					// ì§„í–‰ë°©í–¥ ë°˜ì „
-					switch (map[x][y].dir) {
-					case UP: next_map[nx][ny].dir = DOWN; break;
-					case DOWN: next_map[nx][ny].dir = UP; break;
-					case LEFT: next_map[nx][ny].dir = RIGHT; break;
-					case RIGHT: next_map[nx][ny].dir = LEFT; break;
-					}
-				}
-				else {
-					next_map[nx][ny].cnt += map[x][y].cnt;
-					if (map[x][y].cnt > next_map[nx][ny].maxcnt) {
-						next_map[nx][ny].maxcnt = map[x][y].cnt;
-						next_map[nx][ny].dir = map[x][y].dir;
-					}
-				}
-			}
+bool isedge(int x, int y) { return x == 0 || x == N - 1 || y == 0 || y == N - 1; }
+// ¹Ì»ı¹° ÃÑÇÕ °è»ê
+int count(void) {
+	int ret = 0;
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++) {
+			if (map[i][j].n)
+				ret += map[i][j].n;
+			map[i][j] = { 0, 0 };
 		}
-	}
-
-	// next_map ì •ë³´ë¥¼ mapìœ¼ë¡œ ì˜®ê¸´ í›„ next_map ì´ˆê¸°í™”
-	for (int x = 0; x < N; x++)
-		for (int y = 0; y < N; y++)
-			map[x][y] = next_map[x][y], next_map[x][y] = { 0, 0, 0 };
-}
-
-// ë‚¨ì•„ìˆëŠ” ì´ ë¯¸ìƒë¬¼ ìˆ˜ ë°˜í™˜
-int get_answer(void) {
-	int sum = 0;
-	for (int x = 0; x < N; x++)
-		for (int y = 0; y < N; y++)
-			sum += map[x][y].cnt;
-	return sum;
+	return ret;
 }
 
 int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		int x, y, c, d;
-		for (int i = 0; i < N; i++)
-			for (int j = 0; j < N; j++)
-				map[i][j] = { 0, 0, 0 };
-
-		// ì…ë ¥ë¶€
+		queue<microbe> q;
+		// ÀÔ·ÂºÎ
 		scanf("%d %d %d", &N, &M, &K);
 		for (int i = 0; i < K; i++) {
-			scanf("%d %d %d %d", &x, &y, &c, &d);
-			map[x][y] = { c, d, c };
+			int x, y, n, d;
+			scanf("%d %d %d %d", &x, &y, &n, &d);
+			q.push({ x, y, n, d });
+			map[x][y] = { n, n };
 		}
+		// Ã³¸®ºÎ
+		while (M--) {
+			int size = q.size();
+			while (size--) {
+				microbe m = q.front(); q.pop();
+				if (m.n == map[m.x][m.y].max) {	// ÇöÀç À§Ä¡ÀÇ ±ºÁı Áß ¹Ì»ı¹° ¼ö°¡ °¡Àå ¸¹Àº ±ºÁı
+					if (m.n < map[m.x][m.y].n)	// ´Ù¸¥ ±ºÁıµµ ¸ğÀÎ °æ¿ì
+						m.n = map[m.x][m.y].n;	// ±ºÁı ÇÕÄ§
 
-		// ì²˜ë¦¬ë¶€
-		while (M--)
-			move();
+					m.x += dx[m.d], m.y += dy[m.d];	// ÀÌµ¿ À§Ä¡ °è»ê
+					if (isedge(m.x, m.y)) {	// ÀÌµ¿ À§Ä¡°¡ °¡ÀåÀÚ¸®
+						m.n >>= 1;	// ¹Ì»ı¹° ¼ö ¹İ°¨
+						if (!m.n) continue;	// ¹Ì»ı¹°ÀÌ ¸ğµÎ Á×À½
+						m.d % 2 ? m.d++ : m.d--;	// ¹æÇâ ¹İÀü
+					}
 
-		// ì¶œë ¥ë¶€
-		printf("#%d %d\n", t, get_answer());
+					next_map[m.x][m.y].n += m.n;	// ´ÙÀ½ À§Ä¡¿¡ ¹Ì»ı¹° ¼ö ´©»ê
+					if (m.n > next_map[m.x][m.y].max) {	// ÇØ´ç À§Ä¡·Î ÀÌµ¿ÇÑ ±ºÁı Áß ÃÖ´ë ¹Ì»ı¹° ¼ö ¾÷µ¥ÀÌÆ®
+						next_map[m.x][m.y].max = m.n;
+						q.push(m);
+					}
+				}
+			}
+			for (int i = 0; i < N; i++)
+				for (int j = 0; j < N; j++)
+					// ¸Ê ¾÷µ¥ÀÌÆ®
+					map[i][j] = next_map[i][j], next_map[i][j] = { 0, 0 };
+		}
+		// Ãâ·ÂºÎ
+		printf("#%d %d\n", t, count());
 	}
 	return 0;
 }
