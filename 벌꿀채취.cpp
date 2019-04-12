@@ -9,7 +9,7 @@ int map[10][10];
 int N, M, C, x1, y1, x2, y2, ans;
 
 int max(int a, int b) { return a > b ? a : b; }
-// ÁÖ¾îÁø ½ÃÀÛÁöÁ¡(x, y)ºÎÅÍ M°³ÀÇ ¹úÅë Áß ¼öÀÍÀÇ ÇÕÀÇ ÃÖ´ë°ª °è»ê
+// ì£¼ì–´ì§„ ì‹œì‘ì§€ì (x, y)ë¶€í„° Mê°œì˜ ë²Œí†µ ì¤‘ ìˆ˜ìµì˜ í•©ì˜ ìµœëŒ€ê°’ ê³„ì‚°
 int cal(int x, int y) {
 	int ret = 0, temp1, temp2;
 	for (int i = 1; i < (1 << M); i++) {
@@ -27,20 +27,22 @@ int main(void) {
 	int T;
 	scanf("%d", &T);
 	for (int t = 1; t <= T; t++) {
-		// ÀÔ·ÂºÎ
+		// ì…ë ¥ë¶€
 		scanf("%d %d %d", &N, &M, &C);
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < N; j++)
 				scanf("%d", &map[i][j]);
-		// Ã³¸®ºÎ
+		// ì²˜ë¦¬ë¶€
 		ans = 0;
 		for (x1 = 0; x1 < N; x1++)
-			for (y1 = 0; y1 <= N - M; y1++)	// ÀÏ²Û1ÀÇ ½ÃÀÛÁ¡
+			for (y1 = 0; y1 <= N - M; y1++) {	// ì¼ê¾¼1ì˜ ì‹œì‘ì 
+				int cal1 = cal(x1, y1);	// ì¼ê¾¼1ì˜ ë²Œê¿€ ì±„ì·¨ ìµœëŒ€ ì–‘
 				for (x2 = x1; x2 < N; x2++)
-					for (y2 = x1 == x2 ? y1 + M : 0; y2 <= N - M; y2++)	// ÀÏ²Û2ÀÇ ½ÃÀÛÁ¡
+					for (y2 = x1 == x2 ? y1 + M : 0; y2 <= N - M; y2++)	// ì¼ê¾¼2ì˜ ì‹œì‘ì 
 						if (y2 <= N - M)
-							ans = max(ans, cal(x1, y1) + cal(x2, y2));
-		// Ãâ·ÂºÎ
+							ans = max(ans, cal1 + cal(x2, y2));	// ìµœëŒ€ ìˆ˜ìµ ê³„ì‚°
+			}
+		// ì¶œë ¥ë¶€
 		printf("#%d %d\n", t, ans);
 	}
 	return 0;
